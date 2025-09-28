@@ -1,0 +1,16 @@
+{
+  "translations": {
+
+      "topHeader": {
+      "languages": {
+        "en": "English",
+        "ur": "اردو",
+        "ur-ro": "اردو (روایتی)"
+      }
+    },
+      "homePage": {
+      "title": "Hum Apka Welcome karty hain",
+      "description": "Apne products ko asani se customize karein"
+    }
+  }
+}

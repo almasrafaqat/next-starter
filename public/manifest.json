@@ -1,0 +1,70 @@
+{
+  "short_name": "New You Sports",
+  "name": "Personalize your order with New You Sports",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#D04848",  
+  "background_color": "#ffffff", 
+  "description": "Customize your sportswear with New You Sports.",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/menifest-logo/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/menifest-logo/logo72.png",
+      "type": "image/png",
+      "sizes": "72x72"
+    },
+    {
+      "src": "/menifest-logo/logo96.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "/menifest-logo/logo120.png",
+      "type": "image/png",
+      "sizes": "120x120"
+    },
+    {
+      "src": "/menifest-logo/logo128.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    },
+    {
+      "src": "/menifest-logo/logo144.png",
+      "type": "image/png",
+      "sizes": "144x144"
+    },
+    {
+      "src": "/menifest-logo/logo152.png",
+      "type": "image/png",
+      "sizes": "152x152"
+    },
+    {
+      "src": "/menifest-logo/logo180.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    },
+    {
+      "src": "/menifest-logo/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/menifest-logo/logo384.png",
+      "type": "image/png",
+      "sizes": "384x384"
+    },
+    {
+      "src": "/menifest-logo/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+  
+}
