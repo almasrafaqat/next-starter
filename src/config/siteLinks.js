@@ -20,6 +20,21 @@ const BASE_ROUTES = {
 };
 
 // Customer routes
+// const CUSTOMER_ROUTES = {
+//   DASHBOARD: {
+//     path: "/customer",
+//     labelKey: "link.dashboard",
+//     icon: icons.DASHBOARD,
+//   },
+//   PROFILE: {
+//     path: "/customer/profile",
+//     labelKey: "link.profile",
+//     icon: icons.PROFILE,
+//   },
+//   // ORDER_DETAIL: { path: "/customer/orders", labelKey: "link.orderDetail", icon: icons.PROFILE },
+//   // ... other customer routes
+// };
+
 const CUSTOMER_ROUTES = {
   DASHBOARD: {
     path: "/customer",
@@ -30,9 +45,30 @@ const CUSTOMER_ROUTES = {
     path: "/customer/profile",
     labelKey: "link.profile",
     icon: icons.PROFILE,
+    // children: [
+    //   {
+    //     path: "/customer/profile",
+    //     labelKey: "link.Profile",
+    //     icon: icons.SETTINGS,
+    //   },
+    //   {
+    //     path: "/customer/profile/settings",
+    //     labelKey: "link.profile.settings",
+    //     icon: icons.SETTINGS,
+    //   },
+    //   {
+    //     path: "/customer/profile/security",
+    //     labelKey: "link.profile.security",
+    //     icon: icons.SECURITY,
+    //   },
+    //   {
+    //     path: "/customer/profile/addresses",
+    //     labelKey: "link.profile.addresses",
+    //     icon: icons.ADDRESS,
+    //   },
+    // ],
   },
-  // ORDER_DETAIL: { path: "/customer/orders", labelKey: "link.orderDetail", icon: icons.PROFILE },
-  // ... other customer routes
+  // ...other routes
 };
 
 // Admin routes

@@ -12,6 +12,7 @@ import {
   MenuRailHandle,
 } from "../NavigationBars/NavigationBars";
 import { useDrawer } from "@/hooks/useDrawer";
+import { usePathname, useRouter } from "@/i18n/routing";
 
 const DefaultAds = ({ group }) => (
   <Box
@@ -55,6 +56,13 @@ const DashboardTemplate = ({
     }
   };
 
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleNavigate = (path) => {
+    router.push(path);
+  };
+
   return (
     <LayoutContainer isPadding={false} useContainer={!isSmallScreen} {...rest}>
       {/* Optional: Always-visible rail handle on larger screens */}
@@ -82,7 +90,13 @@ const DashboardTemplate = ({
               flexShrink: 0,
             }}
           >
-            <SidebarLinks group={group} {...sidebarProps} />
+            <SidebarLinks
+              group={group}
+              {...sidebarProps}
+              pathname={pathname}
+              handleNavigate={handleNavigate}
+              showNested={true}
+            />
 
             {/* Mobile navbar */}
             <Box

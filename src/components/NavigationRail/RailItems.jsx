@@ -42,6 +42,8 @@ export const MobileMenuItems = ({
           alignItems: "center",
           justifyContent: "center",
         }}
+        loop={items.length > 2}
+        //  slidesPerView={Math.min(items.length, 3)}
       >
         {items.map((item) => (
           <SwiperSlide key={item.key} style={{ boder: "10px solid red" }}>
@@ -95,7 +97,10 @@ export const MobileMenuItems = ({
                   {item.icon &&
                     React.cloneElement(item.icon, {
                       sx: {
-                        color: selected === item.key ? "primary.contrastText" : "primary.contrastText",
+                        color:
+                          selected === item.key
+                            ? "primary.contrastText"
+                            : "primary.contrastText",
                         fontSize: 24,
                       },
                     })}

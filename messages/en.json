@@ -16,14 +16,12 @@
       "topRated": "Top Rated",
       "dashboard": "Dashboard",
       "profile": "Your profile",
-       "orders": "Your orders",
-       "login": "login",
-       "register": "register",
-       "customer": "customer",
+      "orders": "Your orders",
+      "login": "login",
+      "register": "register",
+      "customer": "customer",
       "userDropdown": {
-       
         "reviews": "Your reviews",
-        
         "coupons": "Coupons & offers",
         "creditBalance": "Credit balance",
         "providers": "Followed providers",
@@ -54,8 +52,7 @@
       "reviewEmptyDescription": "You haven't written any reviews yet. Start sharing your experiences!",
       "goToReviews": "Go to Reviews"
     },
-
-      "common": {
+    "common": {
       "change": "Change",
       "cancel": "Cancel",
       "delete": "Delete",
@@ -70,9 +67,7 @@
       "seeLess": "See less",
       "replace": "Replace",
       "remove": "Remove",
-
       "home": "Home",
-
       "welcomeToTeamManager": "Welcome to Team Manager",
       "emailCollectionExplanation": "Please enter your email address to continue. We'll use this to identify your teams and allow you to access them later.",
       "email": "Email Address",
@@ -83,7 +78,6 @@
       "yourTeamsExplanation": "Below you'll find all the teams you've created.",
       "linkCopiedToClipboard": "Shareable link copied to clipboard!",
       "errorCopyingLink": "Error copying link to clipboard",
-
       "createPin": "Create PIN (at least 4 digits)",
       "enterPin": "Enter PIN",
       "invalidPin": "Please enter a PIN with at least 4 digits",
@@ -93,7 +87,6 @@
       "welcomeBackTitle": "Welcome Back",
       "enterPinTooltip": "Please enter your PIN to continue.",
       "registerAgain": "Please register again with a new PIN",
-
       "processing": "Processing...",
       "identificationError": "There was an error saving your information. Please try again.",
       "registering": "Registering...",
@@ -104,7 +97,6 @@
       "enterPinToVerify": "Please enter your PIN to verify your identity.",
       "pinResetSent": "PIN reset instructions have been sent to your email.",
       "pinResetError": "There was an error requesting PIN reset. Please try again.",
-
       "sessionActive": "Secure session active",
       "signOut": "Sign Out",
       "signedOut": "You have been signed out",
@@ -138,8 +130,8 @@
       "help": "Help"
     },
     "topHeader": {
-       "language": "Language",
-       "currency": "Currency",
+      "language": "Language",
+      "currency": "Currency",
       "languages": {
         "en": "English",
         "ur": "Urdu (Pakistan)",
@@ -152,7 +144,7 @@
         "eur": "€ EUR",
         "gbp": "£ GBP"
       },
-       "currencyInfo": {
+      "currencyInfo": {
         "title": "Currency Display",
         "description": "Prices are displayed in your selected currency for your convenience. However, all payments are processed in USD."
       },
@@ -167,7 +159,6 @@
       "globalShipping": "Global Shipping",
       "blackFridayDeals": "Black Friday Deals – Up to 30% Off Custom Products!"
     },
-
     "searchBar": {
       "search-placeholder": "Search for products...",
       "close": "Close",
@@ -330,10 +321,10 @@
     "image": {
       "registerBackgroundAlt": "Image showing {context}",
       "signInImage": "Sign In Image",
-  "registerImage": "Register Image",
-  "resetPassImage": "Reset Password Image",
-  "forgotPassImage": "Forgot Password Image",
-  "verifyEmailImage": "Verify Email Image"
+      "registerImage": "Register Image",
+      "resetPassImage": "Reset Password Image",
+      "forgotPassImage": "Forgot Password Image",
+      "verifyEmailImage": "Verify Email Image"
     }
   }
 }

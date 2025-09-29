@@ -124,6 +124,10 @@ export const authOptions = {
         trigger,
       });
 
+      if (trigger === "update" && session?.user) {
+        token.user = { ...token.user, ...session.user };
+      }
+
       // Only on initial sign-in
       if (user && account) {
         if (account.provider === "google") {
@@ -154,6 +158,7 @@ export const authOptions = {
             name: userData.name,
             email: userData.email,
             roles: userData.user_roles,
+            createdAt: formatDate(userData.created_at),
             // ...other fields
           };
           token.accessToken = accessToken;
