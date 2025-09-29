@@ -26,6 +26,8 @@ import { sanitizeInput } from "@/utils/formHelper";
 import ReusableCard from "@/components/ReusableCard/ReuseableCard";
 import { useAlert } from "@/hooks/useAlert";
 import { AlertMessage } from "../AlertMessage/AlertMessage";
+import GoogleButton from "@/components/GoogleButton/GoogleButton";
+import PrimaryButton from "@/components/ui/Button/PrimaryButton";
 
 
 
@@ -103,6 +105,16 @@ const SignInModal = ({
       setIsLoading(false);
     }
   };
+
+    const handleSignIn = async () => {
+      try {
+        await signIn("google", { callbackUrl: "/" });
+      } catch (error) {
+        console.error("Sign in failed:", error);
+  
+        alert("Sign-in failed, please try again.");
+      }
+    };
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
@@ -195,7 +207,7 @@ const SignInModal = ({
                 )}
               />
             </Box>
-            <Button
+            <PrimaryButton
               fullWidth
               type="submit"
               variant="contained"
@@ -215,12 +227,14 @@ const SignInModal = ({
               ) : (
                 trans("form.login")
               )}
-            </Button>
+            </PrimaryButton>
           </form>
+          <GoogleButton handleSignIn={handleSignIn} />
           <Typography align="center" sx={{ mt: 3 }}>
             {trans("form.noAccount")}
             <Button onClick={onSwitchToRegister}>{trans("form.signUp")}</Button>
           </Typography>
+          
         </ReusableCard>
       </DialogContent>
     </Dialog>

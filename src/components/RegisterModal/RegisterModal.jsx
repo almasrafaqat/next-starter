@@ -31,18 +31,13 @@ import { REGISTER_URL } from "@/config/apiConfig";
 import { useAlert } from "@/hooks/useAlert";
 import { AlertMessage } from "../AlertMessage/AlertMessage";
 import { TERMS_ROUTE, VERIFY_EMAIL_ROUTE } from "@/config/siteLinks";
+import GoogleButton from "@/components/GoogleButton/GoogleButton";
 
-
-
-const RegisterModal = ({
-  open,
-  onClose,
-  onSwitchToSignIn,
-}) => {
+const RegisterModal = ({ open, onClose, onSwitchToSignIn }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { openAlert, closeAlert, } = useAlert();
+  const { openAlert, closeAlert } = useAlert();
   const router = useRouter();
   const trans = useTranslations("translations");
   const { isRtl } = useResponsiveLayout();
@@ -69,13 +64,11 @@ const RegisterModal = ({
       path: ["confirmPassword"],
     });
 
-
   const {
     control,
     handleSubmit,
     setError,
     formState: { errors },
-
   } = useForm({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -147,6 +140,16 @@ const RegisterModal = ({
       openAlert(errorMessage, "error");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSignIn = async () => {
+    try {
+      await signIn("google", { callbackUrl: "/" });
+    } catch (error) {
+      console.error("Sign in failed:", error);
+
+      alert("Sign-in failed, please try again.");
     }
   };
 
@@ -319,6 +322,7 @@ const RegisterModal = ({
                 trans("form.signUp")
               )}
             </Button>
+            <GoogleButton handleSignIn={handleSignIn} />
           </form>
           <Typography align="center" sx={{ mt: 3 }}>
             {trans("form.alreadyHaveAccount")}

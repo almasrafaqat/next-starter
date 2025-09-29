@@ -25,8 +25,9 @@ import { NavigationLinkItem } from "@/components/NavigationLinkItem/NavigationLi
 import RecentViews from "@/components/RecentViews/RecentViews";
 import SignInModal from "@/components/SignInModal/SignInModal";
 import RegisterModal from "@/components/RegisterModal/RegisterModal";
+import PrimaryButton from "@/components/ui/Button/PrimaryButton";
 
-const UserDropdown = ({group}) => {
+const UserDropdown = ({ group }) => {
   const [open, setOpen] = useState(false);
   const [showRecent, setShowRecent] = useState(false);
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
@@ -53,6 +54,7 @@ const UserDropdown = ({group}) => {
   };
 
   const handleLogout = async () => {
+    console.log("logout");
     await signOut({ redirect: false });
     router.push(ROUTES.HOME.path);
     setOpen(false);
@@ -134,7 +136,7 @@ const UserDropdown = ({group}) => {
                             key={item.path}
                             item={item}
                             isActive={item.path === pathname}
-                            onClick={() => handleNavigate(item.path)}
+                            onNavigate={() => handleNavigate(item.path)}
                           />
                         ))}
                         <Divider sx={{ my: 1 }} />
@@ -144,7 +146,7 @@ const UserDropdown = ({group}) => {
                             labelKey: "displayMessages.signOut",
                             icon: Logout,
                           }}
-                          onClick={handleLogout}
+                          onNavigate={handleLogout}
                         />
                       </List>
                     </>
@@ -157,9 +159,8 @@ const UserDropdown = ({group}) => {
                         gap: 2,
                       }}
                     >
-                      <Button
+                      <PrimaryButton
                         startIcon={<Login />}
-                        variant="contained"
                         fullWidth
                         onClick={handleOpenSignIn}
                         sx={{
@@ -167,11 +168,18 @@ const UserDropdown = ({group}) => {
                             marginLeft: isRtl ? "8px" : "0",
                             marginRight: isRtl ? "-4px" : "8px",
                           },
+                          bgcolor: "primary.main",
+                          color: "white",
+                          py: 0.5,
+                          borderRadius: 2,
+                          "&:hover": {
+                            bgcolor: "secondary.main",
+                          },
                         }}
                       >
                         {trans(ROUTES.AUTH.SIGN_IN.labelKey)}
-                      </Button>
-                      <Button
+                      </PrimaryButton>
+                      <PrimaryButton
                         startIcon={<PersonAdd />}
                         variant="outlined"
                         fullWidth
@@ -181,10 +189,12 @@ const UserDropdown = ({group}) => {
                             marginLeft: isRtl ? "8px" : "0",
                             marginRight: isRtl ? "-4px" : "8px",
                           },
+                           py: 0.5,
+                           borderRadius: 2,
                         }}
                       >
                         {trans(ROUTES.AUTH.REGISTER.labelKey)}
-                      </Button>
+                      </PrimaryButton>
                     </Box>
                   )}
                 </MenuContainer>

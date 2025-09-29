@@ -6,9 +6,12 @@ import Profile from "./Profile/Profile";
 import { CgProfile } from "react-icons/cg";
 import React from "react";
 import { useResponsiveDevice } from "@/hooks/useResponsiveDevice";
+import { useMe } from "@/hooks/useMe";
 
 const CustomerProfile = () => {
   const { isSmallScreen } = useResponsiveDevice();
+  const { data: user, isLoading, error } = useMe();
+  
   const RailMenuItems = [
     {
       key: "Profile",
@@ -24,7 +27,9 @@ const CustomerProfile = () => {
       <CustomTypography variant="h5" gutterBottom>
         Your Profile
       </CustomTypography>
-      <Profile />
+      {isLoading && <div>Loading...</div>}
+      {error && <div>Error: {error.message}</div>}
+      {user && <Profile />}
       <NavigationRail items={RailMenuItems} isScrollable={!isSmallScreen} />
     </Box>
   );

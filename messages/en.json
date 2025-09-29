@@ -50,7 +50,8 @@
       "securityMessage": "Your account is secure",
       "reviewEmpty": "No Reviews Yet",
       "reviewEmptyDescription": "You haven't written any reviews yet. Start sharing your experiences!",
-      "goToReviews": "Go to Reviews"
+      "goToReviews": "Go to Reviews",
+      "cancelEdit": "Cancel Edit"
     },
     "common": {
       "change": "Change",
