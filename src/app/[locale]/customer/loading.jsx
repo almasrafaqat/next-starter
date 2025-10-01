@@ -9,7 +9,7 @@ const loading = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "30vh",
+        height: { xs: '50vh', md: '70vh' },
       }}
     >
       <AppLoader type={LOADING_TYPES.DOTS} message="Loading Dashboard" />

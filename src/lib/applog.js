@@ -1,6 +1,7 @@
 import { GraphQLClient } from "graphql-request";
 
-const endpoint = "http://tijaratplus-admin.test/graphql";
+const endpoint = "http://laravel-starter.test/graphql";
+// const endpoint = "http://tijaratplus-admin.test/graphql";
 
 export function getApplogClient(token) {
   return new GraphQLClient(endpoint, {

@@ -30,7 +30,6 @@ const ME_QUERY = `
 
 export function useMe(options = {}) {
   const { data: session } = useSession();
-  console.log("Session:", session?.accessToken);
   const token = session?.accessToken; // or session?.user?.token, depending on your NextAuth config
 
   return useQuery({

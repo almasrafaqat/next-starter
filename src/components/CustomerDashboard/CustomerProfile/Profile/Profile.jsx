@@ -26,6 +26,7 @@ import { sanitizeInput } from "@/utils/formHelper";
 import { useDrawer } from "@/hooks/useDrawer";
 import { ROUTES } from "@/config/siteLinks";
 import { useDialog } from "@/hooks/useDialog";
+import ReusableCard from "@/components/ReusableCard/ReuseableCard";
 
 const Profile = () => {
   const editProfileSchema = z.object({
@@ -124,11 +125,16 @@ const Profile = () => {
   //   }
   // }, [isUpdatingSession, showLoading]);
 
+  const image = session?.user?.image;
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3, p: 1 }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <Box sx={{ flex: 1 }}>
-          <Paper sx={{ p: 3, borderRadius: 2 }}>
+          <ReusableCard
+            maxWidth={"100%"}
+            
+          >
             <Box
               sx={{
                 display: "flex",
@@ -287,7 +293,7 @@ const Profile = () => {
               <Security fontSize="small" />
               {trans("userProfile.securityMessage")}
             </Typography>
-          </Paper>
+          </ReusableCard>
         </Box>
       </Box>
     </Box>

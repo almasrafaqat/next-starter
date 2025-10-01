@@ -1,9 +1,9 @@
 
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://tijaratplus-admin.test/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://laravel-starter.test/api";
 
 export const STORAGE_URL =
-  process.env.NEXT_PUBLIC_STORAGE_URL || "http://tijaratplus-admin.test";
+  process.env.NEXT_PUBLIC_STORAGE_URL || "http://laravel-starter.test";
 
 /**using for getting cookie */
 export const SANCTUM_URL = `${API_BASE_URL.replace(

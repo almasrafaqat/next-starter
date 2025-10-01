@@ -19,32 +19,22 @@ import {  useRouter } from "@/i18n/routing";
 import { useLocale, useTranslations } from "next-intl";
 import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 import { useSnackbar } from "@/hooks/useSnackbar";
-import { sanitizeInput } from "@/utils/formHelper";
 import ThemedLink from "@/components/ThemeLink/ThemeLink";
 import { useSearchParams } from "next/navigation";
 import {
-  FORGOT_PASSWORD_ROUTE,
-  HOME_ROUTE,
   REGISTER_ROUTE,
 } from "@/config/siteLinks";
 import LayoutContainer from "@/components/LayoutContainer/LayoutContainer";
 import { SIGN_PAGE_BG_IMAGE } from "@/config/gloabalConstants";
-import { getErrorMessage } from "@/utils/errorUtils";
 import EmailLoginForm from "./EmailLoginForm";
 import PhoneLoginForm from "./PhoneLoginForm";
 import GoogleButton from "@/components/GoogleButton/GoogleButton";
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+
   const [loginMethod, setLoginMethod] = useState("email");
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { openSnackbar } = useSnackbar();
   const trans = useTranslations("translations");
   const { isRtl } = useResponsiveLayout();
-  const locale = useLocale();
   // const { data: session, status } = useSession();
 
 

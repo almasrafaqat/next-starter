@@ -1,17 +1,26 @@
 "use client";
-import { Box, Typography } from "@mui/material";
-import CustomTypography from "@/components/Typography/CustomTypography";
+import { Box } from "@mui/material";
 import NavigationRail from "@/components/NavigationRail/NavigationRail";
 import Profile from "./Profile/Profile";
 import { CgProfile } from "react-icons/cg";
 import React from "react";
 import { useResponsiveDevice } from "@/hooks/useResponsiveDevice";
 import { useMe } from "@/hooks/useMe";
+import HeadingTitle from "@/components/HeadingTitle/HeadingTitle";
+import { LoadingCard } from "@/components/ui/LoadingComponents";
+
+const LoadingLayout = () => {
+  return (
+    <Box sx={{ mt: 2, mb: 2 }}>
+      <LoadingCard />
+    </Box>
+  );
+};
 
 const CustomerProfile = () => {
   const { isSmallScreen } = useResponsiveDevice();
   const { data: user, isLoading, error } = useMe();
-  
+
   const RailMenuItems = [
     {
       key: "Profile",
@@ -24,10 +33,8 @@ const CustomerProfile = () => {
 
   return (
     <Box>
-      <CustomTypography variant="h5" gutterBottom>
-        Your Profile
-      </CustomTypography>
-      {isLoading && <div>Loading...</div>}
+      <HeadingTitle title="Manage your profile and account settings" />
+      {isLoading && <LoadingLayout />}
       {error && <div>Error: {error.message}</div>}
       {user && <Profile />}
       <NavigationRail items={RailMenuItems} isScrollable={!isSmallScreen} />
