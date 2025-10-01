@@ -8,6 +8,7 @@ import { useResponsiveDevice } from "@/hooks/useResponsiveDevice";
 import { useMe } from "@/hooks/useMe";
 import HeadingTitle from "@/components/HeadingTitle/HeadingTitle";
 import { LoadingCard } from "@/components/ui/LoadingComponents";
+import PageHead from "@/components/ui/PageHead/PageHead";
 
 const LoadingLayout = () => {
   return (
@@ -32,13 +33,13 @@ const ProfileSection = () => {
   ];
 
   return (
-    <Box>
+    <PageHead title="Manage Profile" index={false}>
       <HeadingTitle title="Manage your profile and account settings" />
       {isLoading && <LoadingLayout />}
       {error && <div>Error: {error.message}</div>}
       {user && <Profile />}
       <NavigationRail items={RailMenuItems} isScrollable={!isSmallScreen} />
-    </Box>
+    </PageHead>
   );
 };
 

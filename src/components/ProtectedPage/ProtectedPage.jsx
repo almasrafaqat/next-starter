@@ -9,9 +9,7 @@ export const ProtectedPage = ({ children }) => {
   const { status } = useAuth();
 
   if (status === "loading") {
-    return (
-      <FullSpinner />
-    );
+    return <FullSpinner />;
   }
 
   if (status === "authenticated") {

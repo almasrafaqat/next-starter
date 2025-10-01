@@ -2,7 +2,14 @@
 
 import { useEffect } from "react"
 
-export default function PageHead({ title, description = "", ogImage = "", ogUrl = "", children }) {
+export default function PageHead({
+  title,
+  description = "",
+  ogImage = "",
+  ogUrl = "",
+  index = true, // <-- add this prop
+  children
+}) {
   useEffect(() => {
     // Update document title
     if (title) {
@@ -39,6 +46,23 @@ export default function PageHead({ title, description = "", ogImage = "", ogUrl 
       updateMetaTag("property", "og:description", description)
     }
 
+    // Add robots meta tag for noindex
+    if (!index) {
+      let robotsTag = document.querySelector('meta[name="robots"]');
+      if (!robotsTag) {
+        robotsTag = document.createElement("meta");
+        robotsTag.name = "robots";
+        document.head.appendChild(robotsTag);
+      }
+      robotsTag.content = "noindex, nofollow";
+    } else {
+      // Remove robots tag if index is true
+      const robotsTag = document.querySelector('meta[name="robots"]');
+      if (robotsTag) {
+        robotsTag.parentNode.removeChild(robotsTag);
+      }
+    }
+
     // Helper function to update meta tags
     function updateMetaTag(attrName, attrValue, content) {
       const metaTag = document.querySelector(`meta[${attrName}="${attrValue}"]`)
@@ -51,7 +75,7 @@ export default function PageHead({ title, description = "", ogImage = "", ogUrl 
         document.head.appendChild(meta)
       }
     }
-  }, [title, description, ogImage, ogUrl])
+  }, [title, description, ogImage, ogUrl, index])
 
   return children
 }

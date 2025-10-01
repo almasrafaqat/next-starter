@@ -2,6 +2,8 @@ import PlansSection from "@/components/CustomerSections/PlansSection/PlansSectio
 import ProfileSection from "@/components/CustomerSections/ProfileSection/ProfileSection";
 import SettingsSection from "@/components/CustomerSections/SettingsSection/SettingsSection";
 import DashboardTemplate from "@/components/DashboardTemplate/DashboardTemplate";
+import NotFoundSection from "@/components/NotFoundSection/NotFoundSection";
+import { ProtectedPage } from "@/components/ProtectedPage/ProtectedPage";
 import React from "react";
 
 const sectionComponents = {
@@ -13,10 +15,12 @@ const sectionComponents = {
 
 const CustomerSectionPage = ({ params }) => {
   const { section } = params;
-  const SectionComponent = sectionComponents[section];
+  const SectionComponent = sectionComponents[section] || NotFoundSection;
   return (
     <DashboardTemplate group="CUSTOMER">
-      {SectionComponent ? <SectionComponent /> : <div>Section not found</div>}
+      <ProtectedPage>
+        <SectionComponent />
+      </ProtectedPage>
     </DashboardTemplate>
   );
 };
