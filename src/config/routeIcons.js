@@ -20,6 +20,7 @@ import {
 
   // ... other icons
 } from '@mui/icons-material';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 
 import PermMediaIcon  from '@mui/icons-material/PermMedia';
 import OutdoorGrillIcon from '@mui/icons-material/OutdoorGrill';
@@ -34,5 +35,6 @@ export const icons = {
   MEDIA: PermMediaIcon,
   DISH: OutdoorGrillIcon,
   KITCHEN: KitchenIcon,
+  PLAN:ManageAccountsIcon
   // ... other icons
 };

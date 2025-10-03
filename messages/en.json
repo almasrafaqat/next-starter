@@ -16,10 +16,13 @@
       "topRated": "Top Rated",
       "dashboard": "Dashboard",
       "profile": "Your profile",
+      "plan": "Manager Subscription",
       "orders": "Your orders",
       "login": "login",
       "register": "register",
       "customer": "customer",
+      "plans": "plans",
+      "companies": "companies",
       "userDropdown": {
         "reviews": "Your reviews",
         "coupons": "Coupons & offers",

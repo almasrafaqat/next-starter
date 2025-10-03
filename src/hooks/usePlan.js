@@ -3,39 +3,38 @@ import { applogRequest } from "@/lib/applog";
 import { useSession } from "next-auth/react";
 
 const ME_QUERY = `
-  query Me {
-    me {
+  query {
+  myCompanies {
+    id
+    name
+    metas {
+      id
+      meta_key
+    }
+    plans {
       id
       name
-      email
-      language
-      email_verified_at
-      created_at
-      updated_at
-      companies {
-        id
-        name
-        plans {
-          id
-          name
-        }
+      metas {
+        meta_key
+        meta_value
       }
     }
   }
+}
 `;
 
 
 
-export function useMe(options = {}) {
+export function usePlan(options = {}) {
   const { data: session } = useSession();
   const token = session?.accessToken; // or session?.user?.token, depending on your NextAuth config
 
   return useQuery({
-    queryKey: ["me", token],
+    queryKey: ["plan", token],
     queryFn: async () => {
       const { data, errors } = await applogRequest(ME_QUERY, undefined, token);
       if (errors) throw new Error(errors[0].message);
-      return data.me;
+      return data.myCompanies;
     },
     enabled: !!token, // only run if token exists
     ...options,

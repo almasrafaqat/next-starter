@@ -68,6 +68,11 @@ const CUSTOMER_ROUTES = {
     //   },
     // ],
   },
+  plans:{
+    path: "/customer/plans",
+    labelKey: "link.plan",
+    icon: icons.PLAN,
+  }
   // ...other routes
 };
 
