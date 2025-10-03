@@ -10,6 +10,7 @@ const ME_QUERY = `
     metas {
       id
       meta_key
+      meta_value
     }
     plans {
       id
