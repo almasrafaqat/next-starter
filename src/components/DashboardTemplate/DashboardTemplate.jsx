@@ -13,6 +13,8 @@ import {
 } from "../NavigationBars/NavigationBars";
 import { useDrawer } from "@/hooks/useDrawer";
 import { usePathname, useRouter } from "@/i18n/routing";
+import TopHeader from "../TopHeader/TopHeader";
+import SearchBar from "../SearchBar/SearchBar";
 
 const DefaultAds = ({ group }) => (
   <Box
@@ -65,6 +67,10 @@ const DashboardTemplate = ({
 
   return (
     <LayoutContainer isPadding={false} useContainer={!isSmallScreen} {...rest}>
+
+
+      <TopHeader />
+      <SearchBar />
       {/* Optional: Always-visible rail handle on larger screens */}
       <Box sx={{ display: { xs: "block", md: "block" } }}>
         <MenuRailHandle onOpen={handleNavClick} open={isOpen} />

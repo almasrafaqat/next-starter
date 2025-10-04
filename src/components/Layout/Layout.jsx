@@ -8,8 +8,8 @@ import ReuseableDrawer from "../ui/ReuseableDrawer/ReuseableDrawer";
 const Layout = ({ children }) => {
   return (
     <>
-      <TopHeader />
-      <MainHeader />
+      {/* <TopHeader />
+      <MainHeader /> */}
       <ReusableDialog />
       <ReuseableDrawer />
       <ReusableSnackbar />

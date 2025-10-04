@@ -72,6 +72,11 @@ const CUSTOMER_ROUTES = {
     path: "/customer/plans",
     labelKey: "link.plan",
     icon: icons.PLAN,
+  },
+  invoice:{
+    path: "/customer/invoices",
+    labelKey: "link.invoices",
+    icon: icons.INVOICE,
   }
   // ...other routes
 };

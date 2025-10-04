@@ -1,3 +1,4 @@
+import InvoiceSection from "@/components/CustomerSections/InvoiceSection/InvoiceSection";
 import PlansSection from "@/components/CustomerSections/PlansSection/PlansSection";
 import ProfileSection from "@/components/CustomerSections/ProfileSection/ProfileSection";
 import SettingsSection from "@/components/CustomerSections/SettingsSection/SettingsSection";
@@ -10,6 +11,7 @@ const sectionComponents = {
   profile: ProfileSection,
   plans: PlansSection,
   settings: SettingsSection,
+  invoices: InvoiceSection,
   // add more as needed
 };
 

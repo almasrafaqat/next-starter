@@ -22,6 +22,10 @@
       "register": "register",
       "customer": "customer",
       "plans": "plans",
+      "invoices": "Invoices",
+      "invoice": {
+        "invoice": "invoice"
+      },
       "companies": "companies",
       "userDropdown": {
         "reviews": "Your reviews",
