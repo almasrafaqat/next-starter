@@ -22,6 +22,7 @@ const SheetDrawer = ({
   showPuller = true,
   minHeight = 200,
   sx,
+  zIndex = 2400, // default zIndex
   ...props
 }) => (
   <SwipeableDrawer
@@ -30,6 +31,11 @@ const SheetDrawer = ({
     onClose={onClose}
     onOpen={onOpen}
     swipeAreaWidth={56}
+    slotProps={{
+      paper: {
+        sx: { zIndex, ...sx },
+      },
+    }}
     {...props}
   >
     <Box

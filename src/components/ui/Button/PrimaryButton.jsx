@@ -7,9 +7,10 @@ export const PrimaryButtonStyled = styled(Button)(({ theme }) => ({
   textTransform: "none",
   fontWeight: 600,
   padding: theme.spacing(1, 2),
-  background: theme.gradientBg,
+  background: theme.palette.primary.gradientBg,
+  color: theme.palette.primary.white,
   "&:hover": {
-    background: theme.gradientBgHover,
+    background: theme.palette.secondary.main,
   },
 }))
 

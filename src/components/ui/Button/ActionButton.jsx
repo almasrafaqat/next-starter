@@ -12,7 +12,8 @@ const ActionButtonStyled = styled(Button)(({ theme }) => ({
   color: theme.palette.primary.main,
   "&:hover": {
     borderColor: theme.palette.primary.dark,
-    backgroundColor: theme.palette.action.hover,
+    color: theme.palette.primary.dark,
+    // backgroundColor: theme.palette.action.hover,
   },
 }))
 

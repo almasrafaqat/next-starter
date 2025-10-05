@@ -1,39 +1,49 @@
-import { useSelector } from "react-redux"
-import { selectCurrency } from "@/store/slices/currencySlice"
+import { useSelector, useDispatch } from 'react-redux';
+import { selectCurrency, fetchExchangeRate } from '@/store/slices/currencySlice';
+import { useEffect } from 'react';
 
-const FormatPrice = ({ price, fromCurrency = "PKR" }) => {
-  const { currency, locale, symbol, exchangeRates } = useSelector(selectCurrency)
+const FormatPrice = ({ price, fromCurrency = 'USD' }) => {
+  const dispatch = useDispatch();
+  const {
+    currency,
+    locale,
+    exchangeRates,
+    status
+  } = useSelector(selectCurrency);
+
+  useEffect(() => {
+    if (status === 'succeeded' && currency !== 'USD' && !exchangeRates[currency]) {
+      dispatch(fetchExchangeRate(currency));
+    }
+  }, [dispatch, status, currency, exchangeRates]);
 
   const convertPrice = (price) => {
+    if (!exchangeRates[currency]) {
+      return price;
+    }
+
     if (fromCurrency === currency) {
-      return price // Same currency, no conversion needed
+      return price;
     }
 
-    if (fromCurrency === "PKR") {
-      // Convert from PKR to target currency
-      const rate = exchangeRates[currency]
-      return rate ? price * rate : price
+    if (fromCurrency !== 'USD') {
+      // Convert to USD first
+      price = price / exchangeRates[fromCurrency];
     }
 
-    // If fromCurrency is not PKR, convert to PKR first, then to target
-    const fromRate = exchangeRates[fromCurrency]
-    if (fromRate) {
-      const priceInPKR = price / fromRate
-      const targetRate = exchangeRates[currency]
-      return targetRate ? priceInPKR * targetRate : priceInPKR
-    }
+    // Convert from USD to target currency
+    return price * exchangeRates[currency];
+  };
 
-    return price // Fallback if no conversion rate available
-  }
-
-  const convertedAmount = convertPrice(price)
+  const convertedAmount = convertPrice(price);
 
   return new Intl.NumberFormat(locale, {
-    style: "currency",
+    style: 'currency',
     currency: currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(convertedAmount)
-}
+  }).format(convertedAmount);
+};
 
-export default FormatPrice
+export default FormatPrice;
+

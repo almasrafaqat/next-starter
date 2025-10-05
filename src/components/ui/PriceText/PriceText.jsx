@@ -7,10 +7,10 @@ const StyledPriceText = styled(Typography)(({ theme }) => ({
   color: theme.palette.primary.main,
 }));
 
-const PriceText = ({ price, sx = {}, ...props }) => {
+const PriceText = ({ price, currency,  sx = {}, ...props }) => {
   return (
     <StyledPriceText variant="subtitle2" sx={sx} {...props}>
-      <FormatPrice price={price} />
+      <FormatPrice price={price} fromCurrency={currency} />
     </StyledPriceText>
   )
 }

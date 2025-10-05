@@ -155,8 +155,8 @@ const createCustomTheme = (direction, brand = {}) => {
         dark: "#B38F00",
         white: "#FFFFFF",
         contrastText: "#1E293B",
-        gradientBg: "linear-gradient(135deg, #FFD700 0%, #B38F00 100%)",
-        gradientBgHover: "linear-gradient(135deg, #FFE34D 0%, #E6B800 100%)",
+        gradientBg: "linear-gradient(135deg, #FFE34D 0%, #E6B800 100%)",
+        gradientBgHover: "linear-gradient(135deg, #FFD700 0%, #B38F00 100%)",
       },
       secondary: {
         light: "#34D399", // light green
