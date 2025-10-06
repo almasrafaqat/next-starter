@@ -16,46 +16,96 @@ import InvoiceFields from "../FormFields/InvoiceFields/InvoiceFields";
 import NavigationPills from "@/components/NavigationPills/NavigationPills";
 import { icons } from "@/config/routeIcons";
 
-
 const CreateInvoice = forwardRef(({ handleSubmitInvoice, isLoading }, ref) => {
   const trans = useTranslations("translations");
   const locale = useLocale();
   const { isRtl } = useResponsiveLayout();
 
-  const schema = z.object({
+  const invoiceSchema = z.object({
     title: z.string().min(1, "Invoice title is required"),
-    customer_name: z.string().min(1, "Customer name is required"),
-    customer_email: z.string().email("Invalid email"),
-    address: z.string().optional(),
-    cc: z.string().optional(),
-    bcc: z.string().optional(),
-    // discount_type: z.string(),
-    // discount: z
-    //   .string()
-    //   .transform((val) => Number(val))
-    //   .refine((val) => !isNaN(val) && val >= 0, {
-    //     message: "Discount must be a number >= 0",
-    //   }),
-    // Add more fields as needed
+    discount_type: z.enum(["none", "percentage", "fixed"]),
+    discount_value: z.string().or(z.number()),
+    discount_name: z.string().optional(),
+    currency: z.string().min(1),
+    paid: z.boolean(),
+    amount_paid: z.string().or(z.number()),
+    balance_due: z.string().or(z.number()),
+    total: z.number(),
+    reminders: z.array(
+      z.object({
+        timezone: z.string(),
+        schedule_date: z.string(), // ISO string
+        expirey_date: z.string(), // ISO string
+      })
+    ),
+    items: z.array(
+      z.object({
+        title: z.string(),
+        description: z.string().optional(),
+        quantity: z.string().or(z.number()),
+        price: z.string().or(z.number()),
+        excludeFromInvoiceDiscount: z.boolean(),
+        itemHasDiscount: z.boolean(),
+        itemDiscountType: z.enum(["none", "percentage", "fixed"]),
+        itemDiscountValue: z.string().or(z.number()).optional(),
+      })
+    ),
+    customers: z.array(
+      z.object({
+        credit_balance: z.string().or(z.number()).optional(),
+        name: z.string(),
+        email: z.string().email(),
+        company: z.string().optional(),
+        phone: z.string().optional(),
+        address: z.string().optional(),
+        cc: z.string().optional(),
+        bcc: z.string().optional(),
+      })
+    ),
+    discount_amount: z.number(),
+    tax_type: z.enum(["none", "percentage", "fixed"]),
+    tax_value: z.string().or(z.number()),
   });
 
+  // Usage in useForm:
   const {
     control,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(invoiceSchema),
     defaultValues: {
       title: "",
-      customer_name: "",
-      customer_email: "",
-      address: "",
-      cc: "",
-      bcc: "",
-      discount_type: "percentage",
-      discount: 0,
+      discount_type: "none",
+      discount_value: "",
+      discount_name: "",
+      invoice_number: "",
+      currency: "USD",
+      paid: false,
+      amount_paid: "",
+      balance_due: "",
+      total: 0,
+      reminders: [],
+      items: [],
+      customers: [],
+      discount_amount: 0,
+      tax_type: "none",
+      tax_value: "",
     },
   });
+  // const {
+  //   control,
+  //   setValue,
+  //   handleSubmit,
+  //   formState: { errors },
+  // } = useForm({
+  //   resolver: zodResolver(schema),
+  //   defaultValues: {
+  //     title: "",
+
+  //   },
+  // });
 
   // Expose submit to parent via ref
   useImperativeHandle(ref, () => ({
@@ -63,9 +113,45 @@ const CreateInvoice = forwardRef(({ handleSubmitInvoice, isLoading }, ref) => {
   }));
 
   const onSubmit = (data) => {
-    console.log("Submitting invoice:", data);
+    const cleanedData = {
+      ...data,
+      invoice_number: data.invoice_number, // Adjusted to match backend schema
+      amount_paid: Number(data.amount_paid) || 0,
+      balance_due: Number(data.balance_due) || 0,
+      total: Number(data.total) || 0,
+      discounts: data.discounts?.map((d) => ({
+        discount_type: d.discount_type,
+        discount: Number(d.discount_value),
+        discount_name: d.discount_name || "",
+        discount_amount: Number(d.discount_amount) || 0,
+      })) || [
+        {
+          discount_type: data.discount_type,
+          discount: Number(data.discount_value),
+          discount_name: data.discount_name || "",
+          discount_amount: Number(data.discount_amount) || 0,
+        },
+      ],
+      discount_value: Number(data.discount_value) || 0,
+      discount_amount: Number(data.discount_amount) || 0,
+      tax_value: Number(data.tax_value) || 0,
+      items: data.items.map((item) => ({
+        ...item,
+        name: item.title, // Adjusted to match backend schema
+        quantity: Number(item.quantity) || 0,
+        price: Number(item.price) || 0,
+        itemDiscountValue: item.itemDiscountValue
+          ? Number(item.itemDiscountValue)
+          : 0,
+      })),
+      customers: data.customers.map((cust) => ({
+        ...cust,
+        credit_balance: cust.credit_balance ? Number(cust.credit_balance) : 0,
+      })),
+    };
+    console.log("Submitting invoice:", cleanedData);
     try {
-      handleSubmitInvoice(data);
+      handleSubmitInvoice(cleanedData);
     } catch (error) {
       console.error("Error submitting invoice:", error);
     } finally {
@@ -79,11 +165,17 @@ const CreateInvoice = forwardRef(({ handleSubmitInvoice, isLoading }, ref) => {
         label: "Invoice",
         selected: true,
         icon: <icons.INVOICE />,
-        component: () => <InvoiceFields control={control} errors={errors} />,
+        component: () => (
+          <InvoiceFields
+            control={control}
+            setValue={setValue}
+            errors={errors}
+          />
+        ),
       },
       // Add more tabs for items, reminders, etc.
     ],
-    [control, errors]
+    [control, errors, setValue]
   );
 
   return (
