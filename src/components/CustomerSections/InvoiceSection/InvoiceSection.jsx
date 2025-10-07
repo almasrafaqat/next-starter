@@ -19,6 +19,9 @@ const InvoiceSection = () => {
   const invoices =
     data?.companies?.flatMap((company) => company.invoices) || [];
 
+  const companyIds = [
+    ...new Set(data?.companies?.map((company) => company.id) || []),
+  ];
   const {
     open: openDialog,
     close: closeDialog,
@@ -42,7 +45,11 @@ const InvoiceSection = () => {
 
   const handleOpenDrawer = () => {
     showDrawer(
-      <CreateInvoice ref={formRef} handleSubmitInvoice={handleSubmitInvoice} />,
+      <CreateInvoice
+        companyId={companyIds[0]}
+        ref={formRef}
+        handleSubmitInvoice={handleSubmitInvoice}
+      />,
       "Create Invoice",
       "bottom"
     );
@@ -61,14 +68,16 @@ const InvoiceSection = () => {
       // Optionally show success message
       alert({
         title: "Success",
-        message: createInvoiceResult.data.message || "Invoice created successfully!",
+        message:
+          createInvoiceResult.data.message || "Invoice created successfully!",
         type: "success",
       });
     }
     if (createInvoiceResult.isError) {
       alert({
         title: "Error",
-        message: createInvoiceResult.error.message || "Failed to create invoice.",
+        message:
+          createInvoiceResult.error.message || "Failed to create invoice.",
         type: "error",
       });
     }

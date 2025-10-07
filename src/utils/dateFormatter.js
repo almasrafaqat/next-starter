@@ -18,6 +18,8 @@ export function formatDate(dateString) {
   return date.toLocaleString("en-US", options);
 }
 
+
+
 import { formatDistanceToNow } from "date-fns";
 
 export const dayDifferenceDate = (createdAt) => {
@@ -25,3 +27,20 @@ export const dayDifferenceDate = (createdAt) => {
 
   return date;
 };
+
+
+export function formatDateForLighthouse(dateInput) {
+  if (!dateInput) return null;
+  const date = new Date(dateInput);
+  if (isNaN(date.getTime())) return null;
+  // Pad single digits
+  const pad = (n) => n.toString().padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
+export function formatDateISO(dateInput) {
+  if (!dateInput) return null;
+  const date = new Date(dateInput);
+  if (isNaN(date.getTime())) return null;
+  return date.toISOString(); // <-- ISO format for GraphQL DateTime
+}

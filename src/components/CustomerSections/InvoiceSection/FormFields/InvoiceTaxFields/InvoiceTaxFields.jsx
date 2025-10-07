@@ -3,7 +3,12 @@ import { Controller } from "react-hook-form";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import ReuseableDropdown from "@/components/ui/ReuseableDropdown/ReuseableDropdown";
 
-export default function InvoiceTaxFields({ control, errors, watchedFields, taxAmount }) {
+export default function InvoiceTaxFields({
+  control,
+  errors,
+  watchedFields,
+  taxAmount,
+}) {
   return (
     <Box>
       <ReuseableDropdown title={"Add Tax"} startIcon={<ReceiptLongIcon />}>
@@ -12,6 +17,16 @@ export default function InvoiceTaxFields({ control, errors, watchedFields, taxAm
             Set invoice-level tax type and value.
           </Typography>
           <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Controller
+                name="tax_name"
+                control={control}
+                defaultValue="none"
+                render={({ field }) => (
+                  <TextField {...field} label="Tax Name" fullWidth />
+                )}
+              />
+            </Grid>
             <Grid item xs={12}>
               <Controller
                 name="tax_type"

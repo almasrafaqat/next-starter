@@ -64,7 +64,7 @@ export default function ItemFields({ control, setValue, errors, watchedFields })
         {fields.map((field, idx) => {
           const item = watchedItems[idx] || field;
           return (
-            <Grid item xs={12} key={item.id}>
+            <Grid item xs={12} key={idx}>
               <Box
                 sx={{
                   mb: 2,

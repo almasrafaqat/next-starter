@@ -18,7 +18,7 @@ const USER_COMPANIES_INVOICES_QUERY = `
           company { name }
           creator { name }
           items { name description price }
-          discounts { discount_type discount }
+          discounts { discount_type discount_value }
           reminders { timezone schedule_date message }
           links { link is_active expires_at }
           charities { cause_name value }

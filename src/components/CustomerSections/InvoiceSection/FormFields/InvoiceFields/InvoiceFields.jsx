@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Controller, useFieldArray, useWatch } from "react-hook-form";
+import { Controller,  useWatch } from "react-hook-form";
 import {
   TextField,
   Typography,
@@ -9,6 +9,7 @@ import {
   InputAdornment,
   Paper,
   IconButton,
+  MenuItem,
 } from "@mui/material";
 import ReusableAccordion from "@/components/ui/ReusableAccordion/ReusableAccordion";
 import ReuseableDropdown from "@/components/ui/ReuseableDropdown/ReuseableDropdown";
@@ -31,6 +32,9 @@ import ItemFields from "../ItemFields/ItemFields";
 import ItemDisplay from "../../ItemDisplay/ItemDisplay";
 import InvoiceStatusFields from "../InvoiceStatusFields/InvoiceStatusFields";
 import ReminderFields from "../ReminderFields/ReminderFields";
+import { DatePicker } from "@mui/x-date-pickers";
+import { transformInvoiceErrors } from "@/utils/formsError";
+import AdvancedChecklistErrors from "../AdvancedChecklistErrors/AdvancedChecklistErrors";
 
 export default function InvoiceFields({ control, setValue, errors }) {
   const { isSmallScreen, isRtl } = useResponsiveDevice();
@@ -42,9 +46,11 @@ export default function InvoiceFields({ control, setValue, errors }) {
   const watchedFields = useWatch({ control });
 
   console.log("Watched Fields:", watchedFields);
+  console.log("Errors:", errors);
 
   //Customer
   const [addCustomer, setAddCustomer] = useState(false);
+  const [showChecklistDialog, setShowChecklistDialog] = useState(false);
 
   const trans = useTranslations("translations");
 
@@ -146,6 +152,30 @@ export default function InvoiceFields({ control, setValue, errors }) {
     setValue("discount_amount", invoiceDiscountAmount);
   }, [invoiceDiscountAmount, setValue]);
 
+  useEffect(() => {
+    setValue("tax_amount", taxAmount);
+  }, [taxAmount, setValue]);
+
+  const flatErrors = transformInvoiceErrors(errors);
+
+  const checklist = [
+    { field: "title", label: "Invoice Title" },
+    { field: "invoice_number", label: "Invoice Number" },
+    { field: "customers[0].name", label: "Customer Name" },
+    { field: "customers[0].email", label: "Customer Email" },
+    // Add more as needed
+  ];
+
+  useEffect(() => {
+    const hasErrors = flatErrors.length > 0;
+
+    if (hasErrors) {
+      setShowChecklistDialog(true);
+    }
+  }, [flatErrors]);
+
+
+
   return (
     <>
       {/* Basic Info Section */}
@@ -221,6 +251,7 @@ export default function InvoiceFields({ control, setValue, errors }) {
       </ReusableAccordion>
 
       <ReminderFields control={control} errors={errors} />
+
       {/* Customer Section */}
       <Box sx={{ mt: 2 }}>
         <ReuseableDropdown
@@ -353,6 +384,7 @@ export default function InvoiceFields({ control, setValue, errors }) {
           taxAmount={taxAmount}
         />
       </Box>
+
       <Controller
         name="total"
         control={control}
@@ -368,6 +400,14 @@ export default function InvoiceFields({ control, setValue, errors }) {
         defaultValue={invoiceDiscountAmount}
         render={({ field }) => (
           <input type="hidden" {...field} value={invoiceDiscountAmount} />
+        )}
+      />
+      <Controller
+        name="tax_amount"
+        control={control}
+        defaultValue={taxAmount}
+        render={({ field }) => (
+          <input type="hidden" {...field} value={taxAmount} />
         )}
       />
 
@@ -394,6 +434,68 @@ export default function InvoiceFields({ control, setValue, errors }) {
           />
         </Typography>
       </Box>
+
+      <Box sx={{ mt: 2 }}>
+        <ReuseableDropdown
+          title="Additional Information"
+          startIcon={<icons.PERSON />}
+          width={isSmallScreen ? 320 : 500}
+        >
+          <Box>
+            <CustomTypography sx={{ mb: 1, fontSize: 13 }} variant="subtitle2">
+              Add any additional information regarding this invoice.
+            </CustomTypography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <Controller
+                  name="timeframe"
+                  control={control}
+                  defaultValue={null}
+                  render={({ field }) => (
+                    <DatePicker
+                      {...field}
+                      label="Timeframe"
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          helperText:
+                            "The Timeframe for this invoice to fulfill the order within.",
+                          error: !!errors?.timeframe,
+                        },
+                      }}
+                      value={field.value || null}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Controller
+                  name="importance"
+                  control={control}
+                  defaultValue="normal"
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      select
+                      label="Importance"
+                      fullWidth
+                      helperText="Set the importance level for this invoice."
+                      error={!!errors?.importance}
+                    >
+                      <MenuItem value="normal">Normal</MenuItem>
+                      <MenuItem value="high">High</MenuItem>
+                      <MenuItem value="urgent">Urgent</MenuItem>
+                      <MenuItem value="low">Low</MenuItem>
+                    </TextField>
+                  )}
+                />
+              </Grid>
+            </Grid>
+          </Box>
+        </ReuseableDropdown>
+      </Box>
+
       <ReusableAccordion title="Notes">
         <Controller
           name="notes"
@@ -411,6 +513,13 @@ export default function InvoiceFields({ control, setValue, errors }) {
           )}
         />
       </ReusableAccordion>
+
+      <AdvancedChecklistErrors
+        checklist={checklist}
+        errors={flatErrors}
+        forceOpen={showChecklistDialog}
+        onClose={() => setShowChecklistDialog(false)}
+      />
     </>
   );
 }
