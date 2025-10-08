@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Controller, useFieldArray, useWatch } from "react-hook-form";
 import {
   TextField,
@@ -17,7 +17,12 @@ import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 import InvoiceFormatPrice from "@/components/FormatPrice/InvoiceFormatPrice";
 import ItemDiscountDisplay from "../../ItemDiscountDisplay/ItemDiscountDisplay";
 
-export default function ItemFields({ control, setValue, errors, watchedFields }) {
+export default function ItemFields({
+  control,
+  setValue,
+  errors,
+  watchedFields,
+}) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "items",
@@ -41,7 +46,10 @@ export default function ItemFields({ control, setValue, errors, watchedFields })
       return subtotal > 0 ? subtotal : 0;
     }
     // Invoice-level discount (if not excluded and no per-item discount)
-    else if (!item.excludeFromInvoiceDiscount && watchedFields.discount_type !== "none") {
+    else if (
+      !item.excludeFromInvoiceDiscount &&
+      watchedFields.discount_type !== "none"
+    ) {
       const val = Number(watchedFields.discount_value) || 0;
       if (watchedFields.discount_type === "percentage") {
         subtotal -= (subtotal * val) / 100;
@@ -58,11 +66,77 @@ export default function ItemFields({ control, setValue, errors, watchedFields })
     0
   );
 
+  useEffect(() => {
+    watchedItems.forEach((item, idx) => {
+      const qty = Number(item.quantity) || 0;
+      const price = Number(item.price) || 0;
+      const subtotal = qty * price;
+      let discountAmount = 0;
+
+      if (item.itemHasDiscount && item.itemDiscountType !== "none") {
+        const val = Number(item.itemDiscountValue) || 0;
+        if (item.itemDiscountType === "percentage") {
+          discountAmount = (subtotal * val) / 100;
+        } else if (item.itemDiscountType === "fixed") {
+          discountAmount = val;
+        }
+        discountAmount = discountAmount > 0 ? discountAmount : 0;
+      } else if (
+        !item.excludeFromInvoiceDiscount &&
+        watchedFields.discount_type !== "none"
+      ) {
+        const val = Number(watchedFields.discount_value) || 0;
+        if (watchedFields.discount_type === "percentage") {
+          discountAmount = (subtotal * val) / 100;
+        } else if (watchedFields.discount_type === "fixed") {
+          discountAmount = val;
+        }
+        discountAmount = discountAmount > 0 ? discountAmount : 0;
+      }
+
+      // Only update if value changed
+      if (item.subtotal !== subtotal) {
+        setValue(`items.${idx}.subtotal`, subtotal, { shouldDirty: false });
+      }
+      if (item.discount_amount !== discountAmount) {
+        setValue(`items.${idx}.discount_amount`, discountAmount, {
+          shouldDirty: false,
+        });
+      }
+    });
+  }, [watchedItems, watchedFields, setValue]);
+
   return (
     <Box>
       <Grid container spacing={2}>
         {fields.map((field, idx) => {
           const item = watchedItems[idx] || field;
+          const qty = Number(item.quantity) || 0;
+          const price = Number(item.price) || 0;
+          const subtotal = qty * price;
+          let discountAmount = 0;
+
+          // Calculate discountAmount
+          if (item.itemHasDiscount && item.itemDiscountType !== "none") {
+            const val = Number(item.itemDiscountValue) || 0;
+            if (item.itemDiscountType === "percentage") {
+              discountAmount = (subtotal * val) / 100;
+            } else if (item.itemDiscountType === "fixed") {
+              discountAmount = val;
+            }
+            discountAmount = discountAmount > 0 ? discountAmount : 0;
+          } else if (
+            !item.excludeFromInvoiceDiscount &&
+            watchedFields.discount_type !== "none"
+          ) {
+            const val = Number(watchedFields.discount_value) || 0;
+            if (watchedFields.discount_type === "percentage") {
+              discountAmount = (subtotal * val) / 100;
+            } else if (watchedFields.discount_type === "fixed") {
+              discountAmount = val;
+            }
+            discountAmount = discountAmount > 0 ? discountAmount : 0;
+          }
           return (
             <Grid item xs={12} key={idx}>
               <Box
@@ -136,6 +210,28 @@ export default function ItemFields({ control, setValue, errors, watchedFields })
                           type="number"
                           fullWidth
                           helperText="Unit price for this item."
+                        />
+                      )}
+                    />
+
+                    {/* Hidden fields for subtotal and discount_amount */}
+                    <Controller
+                      name={`items.${idx}.subtotal`}
+                      control={control}
+                      defaultValue={subtotal}
+                      render={({ field }) => (
+                        <input type="hidden" {...field} value={subtotal} />
+                      )}
+                    />
+                    <Controller
+                      name={`items.${idx}.discount_amount`}
+                      control={control}
+                      defaultValue={discountAmount}
+                      render={({ field }) => (
+                        <input
+                          type="hidden"
+                          {...field}
+                          value={discountAmount}
                         />
                       )}
                     />
