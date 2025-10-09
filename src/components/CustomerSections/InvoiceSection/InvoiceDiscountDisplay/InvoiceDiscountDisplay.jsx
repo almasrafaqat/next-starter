@@ -59,6 +59,7 @@ function MobileView({ discountType, discountValue, discountName, affectedItems, 
               const price = Number(item.price) || 0;
               const original = qty * price;
               const discounted = getDiscountedPrice(item);
+              const discountAmount = original - discounted;
               return (
                 <Box key={item.title} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <Chip label={item.title} size="small" />
@@ -69,6 +70,7 @@ function MobileView({ discountType, discountValue, discountName, affectedItems, 
                   <Typography variant="caption" sx={{ color: "#388e3c", display: "flex", alignItems: "center", gap: 0.5 }}>
                     <PriceCheckIcon fontSize="small" color="success" />
                     {discounted.toFixed(2)}
+                    
                   </Typography>
                 </Box>
               );

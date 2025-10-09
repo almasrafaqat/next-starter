@@ -61,6 +61,24 @@ const CREATE_INVOICE_MUTATION = `
   }
 `;
 
+const SEND_INVOICE_MUTATION = `
+  mutation SendInvoice($id: ID!) {
+    sendInvoice(id: $id) {
+      message
+      success
+    }
+  }
+`;
+
+const DOWNLOAD_INVOICE_MUTATION = `
+  mutation DownloadInvoice($id: ID!) {
+    downloadInvoice(id: $id) {
+      url
+      success
+    }
+  }
+`;
+
 export function useInvoice(options = {}) {
   const { data: session } = useSession();
   const token = session?.accessToken;
@@ -104,9 +122,39 @@ export function useInvoice(options = {}) {
     },
   });
 
+  // Mutation: Send invoice
+  const sendInvoice = useMutation({
+    mutationFn: async (id) => {
+      const { data, errors } = await applogRequest(
+        SEND_INVOICE_MUTATION,
+        { id },
+        token
+      );
+      if (errors) throw new Error(errors[0].message);
+      return data.sendInvoice;
+    },
+  });
+
+  // Mutation: Download invoice
+  const downloadInvoice = useMutation({
+    mutationFn: async (id) => {
+      const { data, errors } = await applogRequest(
+        DOWNLOAD_INVOICE_MUTATION,
+        { id },
+        token
+      );
+      if (errors) throw new Error(errors[0].message);
+      return data.downloadInvoice;
+    },
+  });
+
   return {
     ...query,
     createInvoice: create.mutate,
     createInvoiceResult: create,
+    sendInvoice: sendInvoice.mutate,
+    sendInvoiceResult: sendInvoice,
+    downloadInvoice: downloadInvoice.mutate,
+    downloadInvoiceResult: downloadInvoice,
   };
 }

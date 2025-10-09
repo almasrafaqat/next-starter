@@ -53,6 +53,7 @@ export function formatInvoiceData(data) {
     items: data.items.map((item) => ({
       // ...item,
       name: item.title,
+      description: item.description || "",
       quantity: Number(item.quantity) || 0,
       price: Number(item.price) || 0,
       subtotal: Number(item.subtotal) || 0,

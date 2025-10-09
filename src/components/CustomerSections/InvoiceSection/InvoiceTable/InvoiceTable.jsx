@@ -5,8 +5,26 @@ import InvoiceCharity from "../InvoiceCharity/InvoiceCharity";
 import InvoiceChecklist from "../InvoiceChecklist/InvoiceChecklist";
 import InvoiceItem from "../InvoiceItem/InvoiceItem";
 import InvoiceDiscount from "../InvoiceDiscount/InvoiceDiscount";
+import { useInvoice } from "@/hooks/customer/useInvoice";
 
 export default function InvoiceTable({ invoices, isLoading }) {
+
+  const {
+  sendInvoice,
+  sendInvoiceResult,
+  downloadInvoice,
+  downloadInvoiceResult,
+} = useInvoice();
+
+function handleSendInvoice(id) {
+  sendInvoice(id);
+}
+
+function handleDownloadInvoice(id) {
+  downloadInvoice(id);
+}
+
+
   const columns = [
     { field: "title", headerName: "Title", primary: true, sortable: true },
     {
@@ -48,12 +66,11 @@ export default function InvoiceTable({ invoices, isLoading }) {
       idField="id"
       title="Invoices"
       loading={isLoading}
-
       expandable
       actions={{
-        onEdit: () => alert("Edit action clicked"),
-        onDelete: () => alert("Delete action clicked"),
-        onView: () => alert("View action clicked"),
+        onEdit: (invoice) => handleDownloadInvoice(invoice.id),
+        onDelete: (invoice) => console.log("Delete action clicked", invoice.id),
+        onView: (invoice) => handleSendInvoice(invoice.id),
       }}
       renderExpandedRow={(invoice) => (
         <div>

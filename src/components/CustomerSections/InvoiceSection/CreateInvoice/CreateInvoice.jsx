@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { nullable, z } from "zod";
 import { CircularProgress } from "@mui/material";
 import PrimaryButton from "@/components/ui/Button/PrimaryButton";
 import InvoiceFields from "../FormFields/InvoiceFields/InvoiceFields";
@@ -31,7 +31,7 @@ const CreateInvoice = forwardRef(
       date: z.string().optional(),
       notes: z.string().optional(),
       importance: z.enum(["normal", "high", "urgent", "low"]).optional(),
-      timeframe: z.string().or(z.date()).optional(),
+      timeframe: z.string().nullable().or(z.date()).optional(),
       reminders: z.array(
         z.object({
           timezone: z.string().optional(),

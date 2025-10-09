@@ -113,7 +113,8 @@ export default function InvoiceFields({ control, setValue, errors }) {
     taxAmount = taxValue;
   }
 
-  const grandTotal = itemsSubtotal + taxAmount;
+  const grandTotal = itemsSubtotal;
+  // const grandTotal = itemsSubtotal + taxAmount;
 
   // Paid/remaining
   const paidAmount = Number(watchedFields.amount_paid) || 0;
@@ -141,16 +142,36 @@ export default function InvoiceFields({ control, setValue, errors }) {
     setValue("total", grandTotal);
   }, [grandTotal, setValue]);
 
-  const invoiceDiscountAmount =
-    discountType === "percentage"
-      ? (itemsSubtotal * Number(discountValue)) / 100
-      : discountType === "fixed"
-      ? Number(discountValue)
-      : 0;
+
+
+  const eligibleForInvoiceDiscount = watchedItems.filter(
+  item =>
+    !item.itemHasDiscount &&
+    !item.excludeFromInvoiceDiscount
+);
+
+const eligibleSubtotal = eligibleForInvoiceDiscount.reduce(
+  (sum, item) => {
+    const qty = Number(item.quantity) || 0;
+    const price = Number(item.price) || 0;
+    return sum + qty * price;
+  },
+  0
+);
+
+const invoiceDiscountAmount =
+  discountType === "percentage"
+    ? (eligibleSubtotal * Number(discountValue)) / 100
+    : discountType === "fixed"
+    ? Number(discountValue)
+    : 0;
 
   useEffect(() => {
     setValue("discount_amount", invoiceDiscountAmount);
   }, [invoiceDiscountAmount, setValue]);
+
+  console.log("discountAmount:", invoiceDiscountAmount);
+
 
   useEffect(() => {
     setValue("tax_amount", taxAmount);
