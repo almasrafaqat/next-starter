@@ -16,6 +16,7 @@ import {
   Tune,
   Notifications,
   SwapHoriz,
+
  
 
   // ... other icons
@@ -25,6 +26,10 @@ import DifferenceIcon from '@mui/icons-material/Difference';
 import PermMediaIcon  from '@mui/icons-material/PermMedia';
 import OutdoorGrillIcon from '@mui/icons-material/OutdoorGrill';
 import KitchenIcon from '@mui/icons-material/Kitchen';
+import SendIcon from '@mui/icons-material/Send';
+import { FaDownload } from "react-icons/fa6";
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+
 
 export const icons = {
   HOME,
@@ -49,6 +54,9 @@ export const icons = {
   NOTIFICATIONS: Notifications,
   SWAP_HORIZ: SwapHoriz,
   SHOPPING_BAG: ShoppingBag,
+  SEND: SendIcon,
+  DOWNLOAD: CloudDownloadIcon,
+  COPY: DifferenceIcon,
 
   // ... other icons
 };

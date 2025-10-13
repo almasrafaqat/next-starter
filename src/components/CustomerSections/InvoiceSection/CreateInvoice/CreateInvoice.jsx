@@ -13,20 +13,25 @@ import PrimaryButton from "@/components/ui/Button/PrimaryButton";
 import InvoiceFields from "../FormFields/InvoiceFields/InvoiceFields";
 import NavigationPills from "@/components/NavigationPills/NavigationPills";
 import { icons } from "@/config/routeIcons";
-import { formatInvoiceData } from "@/utils/formatInvoiceData";
+import {
+  formatInvoiceData,
+  mapInvoiceToFormData,
+  invoiceFormDefaults,
+} from "@/utils/formatInvoiceData";
 
 const CreateInvoice = forwardRef(
-  ({ companyId, handleSubmitInvoice, isLoading }, ref) => {
+  ({ companyId, invoice, handleSubmitInvoice, isLoading }, ref) => {
     const invoiceSchema = z.object({
+      id: z.string().or(z.number().nullable()).optional(),
       title: z.string().min(1, "Invoice title is required"),
       invoice_number: z.string().min(1, "Invoice number is required"),
       discount_type: z.enum(["none", "percentage", "fixed"]),
       discount_value: z.string().or(z.number()),
       discount_name: z.string().optional(),
       currency: z.string().min(1),
-      paid: z.boolean(),
       amount_paid: z.string().or(z.number()),
       balance_due: z.string().or(z.number()),
+      payment_status: z.boolean(),
       total: z.number(),
       date: z.string().optional(),
       notes: z.string().optional(),
@@ -58,14 +63,15 @@ const CreateInvoice = forwardRef(
       ),
       customers: z.array(
         z.object({
-          credit_balance: z.string().or(z.number()).optional(),
-          name: z.string(),
+          id: z.string().or(z.number()).nullable().optional(),
+          name: z.string().optional(),
           email: z.string().email(),
-          company: z.string().optional(),
-          phone: z.string().optional(),
-          address: z.string().optional(),
-          cc: z.string().optional(),
-          bcc: z.string().optional(),
+          credit_balance: z.string().or(z.number()).optional(),
+          company: z.string().nullable().optional(),
+          phone: z.string().nullable().optional(),
+          address: z.string().nullable().optional(),
+          cc: z.string().or(z.array(z.string())).nullable().optional(),
+          bcc: z.string().or(z.array(z.string())).nullable().optional(),
         })
       ),
       discount_amount: z.number(),
@@ -76,6 +82,10 @@ const CreateInvoice = forwardRef(
     });
 
     // Usage in useForm:
+    const defaultValues = invoice
+      ? mapInvoiceToFormData(invoice)
+      : invoiceFormDefaults;
+
     const {
       control,
       setValue,
@@ -84,24 +94,7 @@ const CreateInvoice = forwardRef(
       formState: { errors },
     } = useForm({
       resolver: zodResolver(invoiceSchema),
-      defaultValues: {
-        title: "",
-        discount_type: "none",
-        discount_value: "",
-        discount_name: "",
-        invoice_number: "",
-        currency: "USD",
-        paid: false,
-        amount_paid: "",
-        balance_due: "",
-        total: 0,
-        reminders: [],
-        items: [],
-        customers: [],
-        discount_amount: 0,
-        tax_type: "none",
-        tax_value: "",
-      },
+      defaultValues,
     });
 
     // Expose submit to parent via ref
@@ -159,7 +152,7 @@ const CreateInvoice = forwardRef(
           {isLoading ? (
             <CircularProgress size={24} color="inherit" />
           ) : (
-            "Create Invoice"
+            "Save Invoice"
           )}
         </PrimaryButton>
       </form>

@@ -1,8 +1,10 @@
 import { formatDateForLighthouse } from "./dateFormatter";
 
 export function formatInvoiceData(data) {
+
   return {
     // ...data,
+    id: data.id || "",
     invoice_number: data.invoice_number,
     amount_paid: Number(data.amount_paid) || 0,
     balance_due: Number(data.balance_due) || 0,
@@ -10,7 +12,7 @@ export function formatInvoiceData(data) {
     importance: data.importance || "normal",
     title: data.title || "",
     notes: data.notes || "",
-    payment_status: data.paid ? "paid" : "unpaid",
+    payment_status: data.payment_status ? "paid" : "unpaid",
     template_id: data.template_id || null,
     valid_until: data.valid_until || null,
     status: data.status || "pending",
@@ -69,6 +71,7 @@ export function formatInvoiceData(data) {
       total: Number(item.total) || 0,
     })),
     customers: data.customers.map((cust) => ({
+      
       ...cust,
       credit_balance: cust.credit_balance ? Number(cust.credit_balance) : 0,
     })),
@@ -83,5 +86,88 @@ export function formatInvoiceData(data) {
           ? formatDateForLighthouse(reminder.expiry_date)
           : "",
       })) || [],
+  };
+}
+
+export const invoiceFormDefaults = {
+  title: "",
+  discount_type: "none",
+  discount_value: "",
+  discount_name: "",
+  invoice_number: "",
+  currency: "USD",
+  amount_paid: "",
+  payment_status: false,
+  balance_due: "",
+  total: 0,
+  reminders: [],
+  items: [],
+  customers: [],
+  discount_amount: 0,
+  tax_amount: 0,
+  tax_name: "",
+  tax_type: "none",
+  tax_value: "",
+};
+
+export function mapInvoiceToFormData(invoice) {
+  return {
+    id: invoice.id || "",
+    title: invoice.title || "",
+    invoice_number: invoice.invoice_number || "",
+    payment_status: invoice.payment_status === "paid" ? true : false,
+    amount_paid: invoice.amount_paid || 0,
+    balance_due: invoice.balance_due || 0,
+    total: invoice.total || 0,
+    currency: invoice.currency || "USD",
+
+    discount_type: invoice.discounts?.[0]?.discount_type || "none",
+    discount_value: invoice.discounts?.[0]?.discount_value || "",
+    discount_name: invoice.discounts?.[0]?.discount_name || "",
+    discount_amount: invoice.discounts?.[0]?.discount_amount || 0,
+    tax_type: invoice.taxes?.[0]?.tax_type || "none",
+    tax_value: invoice.taxes?.[0]?.tax_value || "",
+    tax_name: invoice.taxes?.[0]?.tax_name || "",
+    tax_amount: invoice.taxes?.[0]?.tax_amount || 0,
+    reminders: invoice.reminders || [],
+    items: (invoice.items || []).map((item) => ({
+      title: item.name || "",
+      description: item.description || "",
+      price: item.price || "",
+      quantity: item.quantity || 1,
+      itemHasDiscount: item.is_discounted || false,
+      excludeFromInvoiceDiscount: item.is_excluded_invoice_discount || false,
+      itemDiscountType: item.discounts?.[0]?.discount_type || "none",
+      itemDiscountValue: Number(item.discounts?.[0]?.discount_value) || 0,
+      itemDiscountAmount: item.itemHasDiscount
+        ? Number(item.discount_amount) || 0
+        : 0,
+
+      isTaxed: item.is_taxed || false,
+      isExcludedFromInvoiceTaxed: item.is_excluded_invoice_taxed || false,
+
+   
+      // add other fields as needed
+    })),
+    customers: invoice.customer
+      ? [
+          {
+            id: invoice.customer.id || "",
+            name: invoice.customer.name || "",
+            email: invoice.customer.email || "",
+            address: invoice.customer.address || "",
+            phone: invoice.customer.phone || "",
+            company: invoice.customer.company || "",
+            credit_balance: invoice.customer.credit_balance
+              ? Number(invoice.customer.credit_balance)
+              : 0,
+            cc: invoice.customer.cc || "",
+            bcc: invoice.customer.bcc || "",
+            
+            // add other fields as needed
+          },
+        ]
+      : [],
+    // add other fields as needed
   };
 }

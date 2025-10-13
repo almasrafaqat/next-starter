@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Controller,  useWatch } from "react-hook-form";
+import React, { useEffect, useRef, useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
 import {
   TextField,
   Typography,
@@ -13,17 +13,12 @@ import {
 } from "@mui/material";
 import ReusableAccordion from "@/components/ui/ReusableAccordion/ReusableAccordion";
 import ReuseableDropdown from "@/components/ui/ReuseableDropdown/ReuseableDropdown";
-import { Add } from "@mui/icons-material";
 import CustomTypography from "@/components/Typography/CustomTypography";
 import { icons } from "@/config/routeIcons";
 import { useResponsiveDevice } from "@/hooks/useResponsiveDevice";
-import { Search as SearchIcon } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
-import CustomerFields from "../CustomerFields/CustomerFields";
-import { CgMathMinus } from "react-icons/cg";
 import InvoiceDiscountDisplay from "../../InvoiceDiscountDisplay/InvoiceDiscountDisplay";
 import TaxDisplay from "../../TaxDisplay/TaxDisplay";
-import CustomerDisplay from "../../CustomerDisplay/CustomerDisplay";
 import CurrencyField from "../CurrencyField/CurrencyField";
 import InvoiceDiscountFields from "../InvoiceDiscountFields/InvoiceDiscountFields";
 import InvoiceTaxFields from "../InvoiceTaxFields/InvoiceTaxFields";
@@ -35,12 +30,10 @@ import ReminderFields from "../ReminderFields/ReminderFields";
 import { DatePicker } from "@mui/x-date-pickers";
 import { transformInvoiceErrors } from "@/utils/formsError";
 import AdvancedChecklistErrors from "../AdvancedChecklistErrors/AdvancedChecklistErrors";
+import CustomerSelection from "../CustomerFields/CustomerSelection";
 
 export default function InvoiceFields({ control, setValue, errors }) {
   const { isSmallScreen, isRtl } = useResponsiveDevice();
-
-  // Paid fields
-  const [searchTerm, setSearchTerm] = useState("");
 
   // Inside your component:
   const watchedFields = useWatch({ control });
@@ -48,15 +41,9 @@ export default function InvoiceFields({ control, setValue, errors }) {
   console.log("Watched Fields:", watchedFields);
   console.log("Errors:", errors);
 
-  //Customer
-  const [addCustomer, setAddCustomer] = useState(false);
   const [showChecklistDialog, setShowChecklistDialog] = useState(false);
 
   const trans = useTranslations("translations");
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
 
   const customerFields = watchedFields.customers
     ? watchedFields.customers[0]
@@ -113,8 +100,8 @@ export default function InvoiceFields({ control, setValue, errors }) {
     taxAmount = taxValue;
   }
 
-  const grandTotal = itemsSubtotal;
-  // const grandTotal = itemsSubtotal + taxAmount;
+  // const grandTotal = itemsSubtotal;
+  const grandTotal = itemsSubtotal + taxAmount;
 
   // Paid/remaining
   const paidAmount = Number(watchedFields.amount_paid) || 0;
@@ -142,36 +129,28 @@ export default function InvoiceFields({ control, setValue, errors }) {
     setValue("total", grandTotal);
   }, [grandTotal, setValue]);
 
-
-
   const eligibleForInvoiceDiscount = watchedItems.filter(
-  item =>
-    !item.itemHasDiscount &&
-    !item.excludeFromInvoiceDiscount
-);
+    (item) => !item.itemHasDiscount && !item.excludeFromInvoiceDiscount
+  );
 
-const eligibleSubtotal = eligibleForInvoiceDiscount.reduce(
-  (sum, item) => {
+  const eligibleSubtotal = eligibleForInvoiceDiscount.reduce((sum, item) => {
     const qty = Number(item.quantity) || 0;
     const price = Number(item.price) || 0;
     return sum + qty * price;
-  },
-  0
-);
+  }, 0);
 
-const invoiceDiscountAmount =
-  discountType === "percentage"
-    ? (eligibleSubtotal * Number(discountValue)) / 100
-    : discountType === "fixed"
-    ? Number(discountValue)
-    : 0;
+  const invoiceDiscountAmount =
+    discountType === "percentage"
+      ? (eligibleSubtotal * Number(discountValue)) / 100
+      : discountType === "fixed"
+      ? Number(discountValue)
+      : 0;
 
   useEffect(() => {
     setValue("discount_amount", invoiceDiscountAmount);
   }, [invoiceDiscountAmount, setValue]);
 
   console.log("discountAmount:", invoiceDiscountAmount);
-
 
   useEffect(() => {
     setValue("tax_amount", taxAmount);
@@ -194,8 +173,6 @@ const invoiceDiscountAmount =
       setShowChecklistDialog(true);
     }
   }, [flatErrors]);
-
-
 
   return (
     <>
@@ -273,105 +250,14 @@ const invoiceDiscountAmount =
 
       <ReminderFields control={control} errors={errors} />
 
-      {/* Customer Section */}
-      <Box sx={{ mt: 2 }}>
-        <ReuseableDropdown
-          title="Add Customer"
-          startIcon={<icons.PERSON />}
-          width={isSmallScreen ? 320 : 500}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <icons.PLAN />
-            <CustomTypography sx={{ ml: 1, fontSize: 13 }} variant="subtitle2">
-              Select or Add a customer to send this invoice to.
-            </CustomTypography>
-          </Box>
-          <Box>
-            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-              {trans("topHeader.currency")}
-            </Typography>
-            <Box sx={{ position: "relative" }}>
-              <Box
-                display={"flex"}
-                alignItems="center"
-                justifyContent="space-between"
-                gap={1}
-              >
-                <TextField
-                  fullWidth
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  // onClick={() => setShowCurrencyList(true)}
-                  placeholder="Search Customer"
-                  size="small"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon fontSize="small" />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    mb: 1,
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "4px",
-                    },
-                    ...(isRtl && {
-                      "& .MuiInputAdornment-root": {
-                        marginLeft: 0,
-                        marginRight: -0.5,
-                      },
-                      "& .MuiOutlinedInput-input": {
-                        textAlign: "right",
-                      },
-                    }),
-                  }}
-                />
-                <IconButton
-                  color="primary"
-                  onClick={() => {
-                    setAddCustomer(!addCustomer);
-                  }}
-                >
-                  {addCustomer ? <CgMathMinus /> : <Add />}
-                </IconButton>
-              </Box>
-              <Paper
-                sx={{
-                  position: "absolute",
-                  width: "100%",
-                  maxHeight: "200px",
-                  overflowY: "auto",
-                  mt: 1,
-                  zIndex: 1,
-                }}
-              >
-                {searchTerm}
-              </Paper>
-            </Box>
-            {addCustomer && (
-              <Box>
-                <Divider sx={{ my: 1 }} />
-                <CustomerFields
-                  control={control}
-                  errors={errors}
-                  setAddCustomer={setAddCustomer}
-                  setValue={setValue}
-                  balance_due={remainingBalance}
-                />
-              </Box>
-            )}
-          </Box>
-        </ReuseableDropdown>
-      </Box>
-
-      <CustomerDisplay customer={customerFields} />
+      <CustomerSelection
+        control={control}
+        setValue={setValue}
+        errors={errors}
+        companyId={1}
+        userId={1}
+        fields={customerFields}
+      />
 
       {/* Item Section */}
       <ReusableAccordion

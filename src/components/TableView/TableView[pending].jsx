@@ -66,6 +66,7 @@ import ImageSkeleton from "../ImageSkeleton/ImageSkeleton";
 import { dayDifferenceDate } from "@/utils/dateFormatter";
 import EasySwiperHorizontal from "../Swiper/EasySwiperHorizontal";
 import { SwiperSlide } from "swiper/react";
+import { CardItem } from "./CardItems";
 
 /**
  * Enhanced data table component with mobile-first approach
@@ -543,251 +544,27 @@ export function TableView({
 
   // Render card view for mobile
   const renderCardView = (row) => {
-    const isExpanded = expandedRows[row[idField]];
-    const isSelected = selected.indexOf(row[idField]) !== -1;
-
-    // Get primary and secondary fields for card display
-    const primaryField = columns.find((col) => col.primary) || columns[0];
-    const secondaryFields = columns.filter(
-      (col) => col.secondary && col.field !== primaryField.field
-    );
-
-    // Get remaining fields for expanded view
-    const expandedFields = columns.filter(
-      (col) =>
-        !col.primary &&
-        !col.secondary &&
-        col.field !== primaryField.field &&
-        col.field !== "actions"
-    );
+    const isExpanded = !!expandedRows[row?.[idField]];
+    const isSelected = selected.indexOf(row?.[idField]) !== -1;
 
     return (
-      <Card
-        key={row[idField]}
-        sx={{
-          mb: 2,
-          position: "relative",
-          overflow: "visible",
-          transition: "all 0.2s ease",
-          boxShadow: isExpanded
-            ? "0 8px 24px rgba(0,0,0,0.12)"
-            : "0 2px 8px rgba(0,0,0,0.08)",
-          "&:hover": {
-            boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
-          },
-          borderRadius: 2,
-        }}
-      >
-        {/* Add this in your header area, where you show selected count */}
-        {showBulkActions && (
-          <div className="flex items-center gap-2 mb-4 p-3 bg-blue-50 rounded-lg">
-            <span className="text-sm text-blue-700">
-              {selected.length} item(s) selected
-            </span>
-
-            {bulkActions?.map((action, index) => (
-              <Button
-                key={index}
-                variant={action.variant || "default"}
-                size="sm"
-                onClick={() => action.onClick(selected)}
-              >
-                {action.icon}
-                {action.label}
-              </Button>
-            ))}
-
-            <Button variant="ghost" size="sm" onClick={() => setSelected([])}>
-              Clear Selection
-            </Button>
-          </div>
-        )}
-        {/* Bulk selection checkbox */}
-        {selectable && (
-          <Checkbox
-            checked={isSelected}
-            onChange={() => handleSelectRow(row[idField])}
-            sx={{
-              position: "absolute",
-              top: 8,
-              left: 8,
-              zIndex: 2,
-              background: "rgba(255,255,255,0.8)",
-              borderRadius: "50%",
-            }}
-          />
-        )}
-
-        {/* Thumbnail as cover */}
-        {row.thumbnail && (
-          <Box
-            component="img"
-            src={row.thumbnail}
-            alt={row.name}
-            sx={{
-              width: "100%",
-              height: 160,
-              objectFit: "cover",
-              borderBottom: "1px solid #eee",
-              borderTopLeftRadius: 8,
-              borderTopRightRadius: 8,
-              display: "block",
-            }}
-          />
-        )}
-        <CardContent sx={{ pb: 1 }}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              mb: 1,
-            }}
-          >
-            <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
-              {renderCellContent(primaryField, row)}
-            </Typography>
-
-            <IconButton
-              size="small"
-              onClick={(e) => handleActionMenuOpen(e, row)}
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-              }}
-            >
-              <MoreVertIcon fontSize="small" />
-            </IconButton>
-          </Box>
-
-          <Stack spacing={1} sx={{ mt: 2 }}>
-            {secondaryFields.map((column) => (
-              <Box
-                key={column.field}
-                sx={{ display: "flex", alignItems: "center" }}
-              >
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{ minWidth: 100, fontWeight: 500 }}
-                >
-                  {column.headerName}:
-                </Typography>
-                <Box sx={{ ml: 1 }}>{renderCellContent(column, row)}</Box>
-              </Box>
-            ))}
-          </Stack>
-
-          {expandable && (
-            <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-              <Box
-                sx={{
-                  mt: 2,
-                  pt: 2,
-                  borderTop: `1px solid ${theme.palette.divider}`,
-                }}
-              >
-                {renderExpandedRow ? (
-                  renderExpandedRow(row)
-                ) : (
-                  <Stack spacing={1.5}>
-                    {expandedFields.map((column) => (
-                      <Box
-                        key={column.field}
-                        sx={{ display: "flex", alignItems: "center" }}
-                      >
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          sx={{ minWidth: 120, fontWeight: 500 }}
-                        >
-                          {column.headerName}:
-                        </Typography>
-                        <Box sx={{ ml: 1 }}>
-                          {renderCellContent(column, row)}
-                        </Box>
-                      </Box>
-                    ))}
-                  </Stack>
-                )}
-              </Box>
-            </Collapse>
-          )}
-        </CardContent>
-
-        <CardActions
-          sx={{
-            justifyContent: "space-between",
-            flexDirection: "column",
-            p: 2,
-          }}
-        >
-          <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
-            {[
-              {
-                condition: actions.onView,
-                label: "View",
-                icon: <ViewIcon fontSize="small" />,
-                color: "info",
-                onClick: () => actions.onView(row),
-              },
-              {
-                condition: actions.onEdit,
-                label: "Edit",
-                icon: <EditIcon fontSize="small" />,
-                color: "primary",
-                onClick: () => actions.onEdit(row),
-              },
-              {
-                condition: actions.onDelete,
-                label: "Delete",
-                icon: <DeleteIcon fontSize="small" />,
-                color: "error",
-                onClick: () => actions.onDelete(row),
-              },
-              ...customRowActions.map((action) => ({
-                condition: true,
-                label: action.label,
-                icon: action.icon,
-                color: action.color || "default",
-                onClick: () => action.onClick(row),
-              })),
-            ]
-              .filter((action) => action.condition)
-              .map((action, index) => (
-                <Box key={index}>
-                  <Tooltip key={index} title={action.label}>
-                    <IconButton
-                      size="small"
-                      onClick={action.onClick}
-                      color={action.color}
-                      sx={{ justifyContent: "flex-start" }}
-                    >
-                      {action.icon}
-                      <Typography variant="caption" sx={{ ml: 1 }}>
-                        {action.label}
-                      </Typography>
-                    </IconButton>
-                  </Tooltip>
-                </Box>
-              ))}
-          </Box>
-        </CardActions>
-
-        {expandable && (
-          <Button
-            size="small"
-            onClick={() => handleExpandRow(row[idField])}
-            endIcon={
-              isExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />
-            }
-            sx={{ textTransform: "none" }}
-          >
-            {isExpanded ? "Less" : "More"}
-          </Button>
-        )}
-      </Card>
+      <CardItem
+        row={row}
+        idField={idField}
+        columns={columns}
+        isExpanded={isExpanded}
+        isSelected={isSelected}
+        selectable={selectable}
+        showBulkActions={showBulkActions}
+        bulkActions={bulkActions}
+        customRowActions={customRowActions}
+        expandable={expandable}
+        renderExpandedRow={renderExpandedRow}
+        onToggleExpand={handleExpandRow}
+        onToggleSelect={handleSelectRow}
+        onActionMenuOpen={handleActionMenuOpen}
+        actions={actions}
+      />
     );
   };
 
@@ -1828,7 +1605,7 @@ export function TableView({
       )}
 
       {/* Action menu for mobile */}
-      <Menu
+      {/* <Menu
         anchorEl={actionMenuAnchor}
         open={Boolean(actionMenuAnchor)}
         onClose={handleActionMenuClose}
@@ -1867,7 +1644,7 @@ export function TableView({
             <ListItemText>Delete</ListItemText>
           </MenuItem>
         )}
-      </Menu>
+      </Menu> */}
     </Paper>
   );
 }

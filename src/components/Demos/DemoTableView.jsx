@@ -1,4 +1,4 @@
-import {TableView} from "@/components/TableView/TableView";
+import {TableView} from "@/components/TableView/TableView[pending]";
 import HeadingTitle from "@/components/HeadingTitle/HeadingTitle";
 import DisplayMessage from "@/components/DisplayMessage/DisplayMessage";
 import { demoCustomers } from "@/data/demoCustomers";

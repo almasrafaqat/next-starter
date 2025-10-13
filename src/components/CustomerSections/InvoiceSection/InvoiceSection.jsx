@@ -10,8 +10,13 @@ import { useInvoice } from "@/hooks/customer/useInvoice";
 import { useDrawer } from "@/hooks/useDrawer";
 
 const InvoiceSection = () => {
-  const { data, isLoading, error, createInvoice, createInvoiceResult } =
-    useInvoice();
+  const {
+    data,
+    isLoading,
+    error,
+    createInvoice,
+    createInvoiceResult,
+  } = useInvoice();
 
   const { showDrawer, hideDrawer } = useDrawer();
   const formRef = useRef();
@@ -19,9 +24,12 @@ const InvoiceSection = () => {
   const invoices =
     data?.companies?.flatMap((company) => company.invoices) || [];
 
+  
+
   const companyIds = [
     ...new Set(data?.companies?.map((company) => company.id) || []),
   ];
+
   const {
     open: openDialog,
     close: closeDialog,
@@ -43,18 +51,22 @@ const InvoiceSection = () => {
     }
   };
 
+
+
   const handleOpenDrawer = () => {
     showDrawer(
       <CreateInvoice
         companyId={companyIds[0]}
         ref={formRef}
         handleSubmitInvoice={handleSubmitInvoice}
+      
       />,
       "Create Invoice",
       "bottom"
     );
   };
 
+  /**CREATE INVOICE LOADER */
   useEffect(() => {
     if (createInvoiceResult.isPending) {
       showLoading({
@@ -91,6 +103,8 @@ const InvoiceSection = () => {
     showLoading,
     closeDialog,
   ]);
+
+
 
   return (
     <PageHead title="Manage Invoices" index={false}>

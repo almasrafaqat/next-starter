@@ -27,7 +27,7 @@ export default function InvoiceStatusFields({
       <Grid item xs={12} sm={4}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Controller
-            name="paid"
+            name="payment_status"
             control={control}
             defaultValue={false}
             render={({ field }) => (
