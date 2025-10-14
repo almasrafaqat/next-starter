@@ -26,6 +26,10 @@
       "invoice": {
         "invoice": "invoice"
       },
+       "settings": "Settings",
+      "setting": {
+        "settings": "settings"
+      },
       "companies": "companies",
       "userDropdown": {
         "reviews": "Your reviews",
