@@ -9,6 +9,7 @@ import Profile from "../ProfileSection/Profile/Profile";
 import NavigationRail from "@/components/NavigationRail/NavigationRail";
 import { icons } from "@/config/routeIcons";
 import CompanyForm from "./Company/CompanyForm/CompanyForm";
+import CompanyList from "./Company/CompanyList/CompanyList";
 
 const SettingsSection = () => {
   const RailMenuItems = [
@@ -16,6 +17,13 @@ const SettingsSection = () => {
       key: "company",
       label: "Company",
       select: true,
+      icon: <CgProfile />,
+      component: CompanyList,
+    },
+    {
+      key: "create",
+      label: "Company",
+      select: false,
       icon: <CgProfile />,
       component: CompanyForm,
     },
@@ -45,6 +53,8 @@ const SettingsSection = () => {
   return (
     <PageHead title="Manage Settings" index={false}>
       <HeadingTitle sx={{ mb: 2 }} title="Manage Settings" />
+
+      <CompanyList />
 
       <NavigationPills
         items={pillItems}
