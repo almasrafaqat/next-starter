@@ -1,32 +1,39 @@
-import React from "react";
-import {
-  Box,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  IconButton,
-  Tooltip,
-  Chip,
-  Typography,
-  Button,
-  CircularProgress,
-} from "@mui/material";
-import {
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Star as StarIcon,
-  StarBorder as StarBorderIcon,
-  Add as AddIcon,
-} from "@mui/icons-material";
+import React, { useEffect, useState } from "react";
+import { TableView } from "@/components/TableView/TableView";
 import { useCompany } from "@/hooks/customer/useCompany";
+import { useDialog } from "@/hooks/useDialog";
 import { useRouter } from "@/i18n/routing";
+import { icons } from "@/config/routeIcons";
+import { Box, Chip, IconButton, Typography } from "@mui/material";
+import { title } from "process";
+import { MoreVert } from "@mui/icons-material";
+import CompanyCard from "./CompanyCard/CompanyCard";
+import { LoadingCard } from "@/components/ui/LoadingComponents";
+import SheetDrawer from "@/components/ui/Sheet/SheetDrawer";
+import CompanyForm from "../CompanyForm/CompanyForm";
 
 const CompanyList = () => {
   const router = useRouter();
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [editingCompany, setEditingCompany] = useState(null);
+
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+    setEditingCompany(null);
+  };
+
+  const handleCreateCompany = () => {
+    setEditingCompany(null);
+    setIsDrawerOpen(true);
+  };
+
+  const handleEditCompany = (company) => {
+    setEditingCompany(company);
+    setIsDrawerOpen(true);
+  };
+    
+
   const {
     companies,
     isLoading,
@@ -37,30 +44,115 @@ const CompanyList = () => {
     setDefaultCompanyResult,
   } = useCompany();
 
-  const handleEdit = (id) => {
-    router.push(`/settings/companies/edit/${id}`);
-  };
+  const {
+    open,
+    close: closeDialog,
+    loading: showLoading,
+    alert,
+    confirm: confirmDialog,
+  } = useDialog();
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this company?")) {
-      deleteCompany(id, {
-        onSuccess: (result) => {
-          if (result?.success) {
-            alert("Company deleted successfully!");
-            refetch();
-          } else {
-            alert(result?.message || "Failed to delete company");
-          }
-        },
-        onError: (error) => {
-          alert(`Failed to delete company: ${error.message}`);
-        },
+  // Handle delete loaders/alerts
+  useEffect(() => {
+    if (deleteCompanyResult.isPending) {
+      showLoading({
+        title: "Deleting Company...",
+        message: "Please wait while deleting company...",
+      });
+    } else {
+      closeDialog();
+    }
+    if (deleteCompanyResult.isSuccess) {
+      alert({
+        title: "Success",
+        message:
+          deleteCompanyResult.data?.message || "Company deleted successfully!",
+        type: "success",
+      });
+      refetch?.();
+    }
+    if (deleteCompanyResult.isError) {
+      alert({
+        title: "Error",
+        message:
+          deleteCompanyResult.error?.message || "Failed to delete company.",
+        type: "error",
       });
     }
+  }, [
+    deleteCompanyResult.isPending,
+    deleteCompanyResult.isSuccess,
+    deleteCompanyResult.isError,
+    deleteCompanyResult.error,
+    deleteCompanyResult.data,
+    showLoading,
+    closeDialog,
+    alert,
+    refetch,
+  ]);
+
+  // Handle set-default loaders/alerts
+  useEffect(() => {
+    if (setDefaultCompanyResult.isPending) {
+      showLoading({
+        title: "Updating Default Company...",
+        message: "Please wait while updating default company...",
+      });
+    } else {
+      closeDialog();
+    }
+    if (setDefaultCompanyResult.isSuccess) {
+      alert({
+        title: "Success",
+        message:
+          setDefaultCompanyResult.data?.message ||
+          "Default company set successfully!",
+        type: "success",
+      });
+      refetch?.();
+    }
+    if (setDefaultCompanyResult.isError) {
+      alert({
+        title: "Error",
+        message:
+          setDefaultCompanyResult.error?.message ||
+          "Failed to set default company.",
+        type: "error",
+      });
+    }
+  }, [
+    setDefaultCompanyResult.isPending,
+    setDefaultCompanyResult.isSuccess,
+    setDefaultCompanyResult.isError,
+    setDefaultCompanyResult.error,
+    setDefaultCompanyResult.data,
+    showLoading,
+    closeDialog,
+    alert,
+    refetch,
+  ]);
+
+  const handleEdit = (company) => {
+    router.push(`/settings/companies/edit/${company.id}`);
   };
 
-  const handleSetDefault = async (id) => {
-    setDefaultCompany(id, {
+  const handleDelete = (company) => {
+    confirmDialog({
+      title: "Confirm Deletion",
+      message: `Are you sure you want to delete "${company.name}"?`,
+      type: "error",
+      onConfirm: () => deleteCompany(company.id),
+    });
+  };
+
+  const handleSetDefault = (company) => {
+    alert({
+      title: "Confirm Set Default",
+      message: `Are you sure you want to set "${company.name}" as the default company?`,
+      type: "info",
+    });
+
+    setDefaultCompany(company.id, {
       onSuccess: (result) => {
         if (result?.success) {
           alert("Default company set successfully!");
@@ -73,112 +165,60 @@ const CompanyList = () => {
     });
   };
 
+  const actions = [
+    {
+      label: "Edit",
+      onClick: (company) => handleEditCompany(company),
+      icon: icons.EDIT,
+    },
+    {
+      label: "Delete",
+      onClick: (company) => handleDelete(company),
+      icon: icons.DELETE,
+    },
+    {
+      label: "Set as Default",
+      onClick: (company) => handleSetDefault(company),
+      icon: icons.TOGGLE,
+    },
+  ];
+
   if (isLoading) {
+    return <LoadingCard />;
+  }
+
+  // Show empty state
+  if (!companies || companies.length === 0) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
-        <CircularProgress />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: 400,
+          gap: 2,
+        }}
+      >
+        <Typography variant="h6" color="text.secondary">
+          No companies found
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Create your first company to get started
+        </Typography>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Typography variant="h5">Companies</Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => router.push("/settings/companies/create")}
-        >
-          Add Company
-        </Button>
-      </Box>
+    <Box sx={{ marginBottom: 5 }}>
+      {companies?.map((company) => (
+        <CompanyCard key={company.id} company={company} actions={actions} />
+      ))}
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell>Country</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Default</TableCell>
-              <TableCell align="right">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {companies.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} align="center">
-                  No companies found
-                </TableCell>
-              </TableRow>
-            ) : (
-              companies.map((company) => (
-                <TableRow key={company.id}>
-                  <TableCell>{company.name}</TableCell>
-                  <TableCell>{company.email || "-"}</TableCell>
-                  <TableCell>{company.phone || "-"}</TableCell>
-                  <TableCell>{company.country || "-"}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={company.is_active ? "Active" : "Inactive"}
-                      color={company.is_active ? "success" : "default"}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip title="Set as default">
-                      <IconButton
-                        size="small"
-                        onClick={() => handleSetDefault(company.id)}
-                        disabled={
-                          company.is_default || setDefaultCompanyResult.isPending
-                        }
-                      >
-                        {company.is_default ? (
-                          <StarIcon color="primary" />
-                        ) : (
-                          <StarBorderIcon />
-                        )}
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell align="right">
-                    <Tooltip title="Edit">
-                      <IconButton
-                        size="small"
-                        onClick={() => handleEdit(company.id)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Delete">
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDelete(company.id)}
-                        disabled={
-                          company.is_default || deleteCompanyResult.isPending
-                        }
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <SheetDrawer open={isDrawerOpen} onClose={handleCloseDrawer}>
+        <CompanyForm companyId={1} mode="edit" />
+      </SheetDrawer>
     </Box>
   );
 };

@@ -18,7 +18,7 @@ const SettingsSection = () => {
       label: "Company",
       select: true,
       icon: <CgProfile />,
-      component: CompanyList,
+      component: '',
     },
     {
       key: "create",
@@ -54,13 +54,13 @@ const SettingsSection = () => {
     <PageHead title="Manage Settings" index={false}>
       <HeadingTitle sx={{ mb: 2 }} title="Manage Settings" />
 
-      <CompanyList />
+     <CompanyList />
 
-      <NavigationPills
+      {/* <NavigationPills
         items={pillItems}
         boxShadow={false}
         isScrollable={false}
-      />
+      /> */}
 
       <NavigationRail items={RailMenuItems} />
     </PageHead>

@@ -16,8 +16,7 @@ import {
   Tune,
   Notifications,
   SwapHoriz,
-
- 
+  
 
   // ... other icons
 } from '@mui/icons-material';
@@ -29,6 +28,15 @@ import OutdoorGrillIcon from '@mui/icons-material/OutdoorGrill';
 import KitchenIcon from '@mui/icons-material/Kitchen';
 import SendIcon from '@mui/icons-material/Send';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ToggleOnIcon from '@mui/icons-material/ToggleOn';
+import EditIcon from '@mui/icons-material/Edit';
+import ToggleOffIcon from '@mui/icons-material/ToggleOff';
+import { InfoOutlined } from "@mui/icons-material";
+import MailIcon from '@mui/icons-material/Mail';
+import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
+import BusinessIcon from '@mui/icons-material/Business';
 
 
 export const icons = {
@@ -58,6 +66,15 @@ export const icons = {
   DOWNLOAD: CloudDownloadIcon,
   COPY: DifferenceIcon,
   SETTINGS: SettingsSuggestIcon,
+  MORE: MoreHorizIcon,
+  DELETE: DeleteIcon,
+  EDIT: EditIcon,
+  TOGGLE: ToggleOnIcon,
+  TOGGLE_OFF: ToggleOffIcon,
+  INFO: InfoOutlined,
+  MAIL: MailIcon,
+  PHONE: PhoneAndroidIcon,
+  BUSINESS: BusinessIcon,
 
   // ... other icons
 };

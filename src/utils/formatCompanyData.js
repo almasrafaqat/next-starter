@@ -128,23 +128,42 @@ const updateCompanySchema = companySchema.partial().required({
 });
 
 const companyDefaultValues = {
-  name: "Acme Corporation", // Example existing data
-  email: "contact@acme.com",
-  phone: "+1 (555) 123-4567",
-  website: "https://acme.com",
-  address: "123 Business St, Business City, BC 12345",
-  tax_number: "TAX123456789",
-  registration_number: "REG987654321",
-  country: "United States",
-  state: "California",
-  city: "San Francisco",
-  zip_code: "94102",
-  description: "Leading provider of innovative solutions",
+  name: "", // Example existing data
+  email: "",
+  phone: "",
+  website: "",
+  address: "",
+  tax_number: "",
+  registration_number: "",
+  country: "",
+  state: "",
+  city: "",
+  zip_code: "",
+  description: "",
   language: "en",
   currency: "USD",
   is_active: true,
   is_default: false,
 };
+
+// const companyDefaultValues = {
+//   name: "Acme Corporation", // Example existing data
+//   email: "contact@acme.com",
+//   phone: "+1 (555) 123-4567",
+//   website: "https://acme.com",
+//   address: "123 Business St, Business City, BC 12345",
+//   tax_number: "TAX123456789",
+//   registration_number: "REG987654321",
+//   country: "United States",
+//   state: "California",
+//   city: "San Francisco",
+//   zip_code: "94102",
+//   description: "Leading provider of innovative solutions",
+//   language: "en",
+//   currency: "USD",
+//   is_active: true,
+//   is_default: false,
+// };
 
 const companyMapData = (company) => {
   return {

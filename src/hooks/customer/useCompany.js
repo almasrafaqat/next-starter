@@ -23,6 +23,20 @@ const GET_COMPANIES_QUERY = `
       currency
       is_active
       is_default
+       mailSettings {
+        id
+        type
+        host
+        port
+        username
+        password
+        from_name
+        from_email
+        encryption
+        is_default
+        is_active
+        created_by
+      }
     }
   }
 `;
@@ -246,8 +260,11 @@ export function useCompany(options = {}) {
     },
   });
 
+
+
   return {
     ...query,
+    isLoading: query.isLoading || query.isFetching,
     companies: query.data || [],
     createCompany: create.mutate,
     createCompanyResult: create,

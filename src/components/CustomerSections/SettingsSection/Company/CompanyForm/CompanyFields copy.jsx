@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Controller } from "react-hook-form";
+import React, { useState } from 'react';
+import { Controller } from 'react-hook-form';
 import {
   TextField,
   Grid,
@@ -11,65 +11,43 @@ import {
   FormControlLabel,
   Paper,
   Divider,
-  Button,
-  CircularProgress,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Edit as EditIcon,
   Save as SaveIcon,
   Cancel as CancelIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 
-const CompanyFields = ({
-  control,
-  errors,
-  handleSubmit,
-  reset,
-  getValues,
-  loading = false,
-  mode = "create",
-}) => {
-  const [isEditing, setIsEditing] = useState(mode === "create");
-  const [originalValues, setOriginalValues] = useState(null);
+export const CompanyFields = ({ control, errors, handleSubmit, reset, getValues }) => {
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleEditToggle = () => {
-    if (isEditing && mode === "edit") {
+    if (isEditing) {
       // If canceling edit, reset form to original values
-      if (originalValues) {
-        reset(originalValues);
-      }
-      setIsEditing(false);
-    } else {
-      // Store current values before editing
-      setOriginalValues(getValues());
-      setIsEditing(true);
+      reset(getValues());
     }
+    setIsEditing(!isEditing);
   };
 
-  const handleSave = () => {
-    // Call the handleSubmit function passed from parent
-    handleSubmit();
-    if (mode === "edit") {
-      setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      await handleSubmit((data) => {
+        console.log('Saving data:', data);
+        // Here you would typically call your API to save the data
+        setIsEditing(false);
+      })();
+    } catch (error) {
+      console.error('Error saving:', error);
     }
   };
 
   return (
     <Paper sx={{ p: 3 }}>
       {/* Header with Edit/Save/Cancel buttons */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Typography variant="h6">
-          {mode === "create" ? "Create New Company" : "Company Information"}
-        </Typography>
-        <Box sx={{ display: "flex", gap: 1 }}>
-          {mode === "edit" && !isEditing ? (
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h6">Company Information</Typography>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          {!isEditing ? (
             <Tooltip title="Edit Company Information">
               <IconButton onClick={handleEditToggle} color="primary">
                 <EditIcon />
@@ -77,26 +55,16 @@ const CompanyFields = ({
             </Tooltip>
           ) : (
             <>
-              <Button
-                variant="contained"
-                color="success"
-                startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
-                onClick={handleSave}
-                disabled={loading}
-              >
-                {mode === "create" ? "Create" : "Save"}
-              </Button>
-              {mode === "edit" && (
-                <Button
-                  variant="outlined"
-                  color="error"
-                  startIcon={<CancelIcon />}
-                  onClick={handleEditToggle}
-                  disabled={loading}
-                >
-                  Cancel
-                </Button>
-              )}
+              <Tooltip title="Save Changes">
+                <IconButton onClick={handleSave} color="success">
+                  <SaveIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Cancel Changes">
+                <IconButton onClick={handleEditToggle} color="error">
+                  <CancelIcon />
+                </IconButton>
+              </Tooltip>
             </>
           )}
         </Box>
@@ -407,7 +375,7 @@ const CompanyFields = ({
                 control={
                   <Switch
                     {...field}
-                    checked={field.value || false}
+                    checked={field.value}
                     disabled={!isEditing}
                   />
                 }
@@ -426,7 +394,7 @@ const CompanyFields = ({
                 control={
                   <Switch
                     {...field}
-                    checked={field.value || false}
+                    checked={field.value}
                     disabled={!isEditing}
                   />
                 }

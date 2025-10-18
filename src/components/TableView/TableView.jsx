@@ -119,6 +119,8 @@ export function TableView({
   headerContent = null, // <-- for tabs or extra controls
   customRowActions = [], // <-- array of {icon, label, onClick}
   bulkActions = [], // <-- array of {icon, label, onClick}
+  renderCardHeader = null, // <-- function to render card header in card view
+  renderCardFooter = null, // <-- function to render card footer in card view
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -635,31 +637,44 @@ export function TableView({
             }}
           />
         )}
-        <CardContent sx={{ pb: 1 }}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              mb: 1,
-            }}
-          >
-            <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
-              {renderCellContent(primaryField, row)}
-            </Typography>
 
-            <IconButton
-              size="small"
-              onClick={(e) => handleActionMenuOpen(e, row)}
+        <CardContent sx={{ pb: 1 }}>
+          {/* NEW: allow caller to render a custom card header, otherwise fallback */}
+          {renderCardHeader ? (
+            <Box sx={{ position: "relative", mb: 1 }}>
+              {renderCardHeader({
+                row,
+                isSelected,
+                toggleSelect: () => handleSelectRow(row[idField]),
+                openActions: (e) => handleActionMenuOpen(e, row),
+              })}
+            </Box>
+          ) : (
+            <Box
               sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                mb: 1,
               }}
             >
-              <MoreVertIcon fontSize="small" />
-            </IconButton>
-          </Box>
+              <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
+                {renderCellContent(primaryField, row)}
+              </Typography>
+
+              <IconButton
+                size="small"
+                onClick={(e) => handleActionMenuOpen(e, row)}
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                }}
+              >
+                <MoreVertIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          )}
 
           <Stack spacing={1} sx={{ mt: 2 }}>
             {secondaryFields.map((column) => (
@@ -716,64 +731,70 @@ export function TableView({
           )}
         </CardContent>
 
-        <CardActions
-          sx={{
-            justifyContent: "space-between",
-            flexDirection: "column",
-            p: 2,
-          }}
-        >
-          <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
-            {[
-              {
-                condition: actions.onView,
-                label: "View",
-                icon: <ViewIcon fontSize="small" />,
-                color: "info",
-                onClick: () => actions.onView(row),
-              },
-              {
-                condition: actions.onEdit,
-                label: "Edit",
-                icon: <EditIcon fontSize="small" />,
-                color: "primary",
-                onClick: () => actions.onEdit(row),
-              },
-              {
-                condition: actions.onDelete,
-                label: "Delete",
-                icon: <DeleteIcon fontSize="small" />,
-                color: "error",
-                onClick: () => actions.onDelete(row),
-              },
-              ...customRowActions.map((action) => ({
-                condition: true,
-                label: action.label,
-                icon: action.icon,
-                color: action.color || "default",
-                onClick: () => action.onClick(row),
-              })),
-            ]
-              .filter((action) => action.condition)
-              .map((action, index) => (
-                <Box key={index}>
-                  <Tooltip key={index} title={action.label}>
-                    <IconButton
-                      size="small"
-                      onClick={action.onClick}
-                      color={action.color}
-                      sx={{ justifyContent: "flex-start" }}
-                    >
-                      {action.icon}
-                      <Typography variant="caption" sx={{ ml: 1 }}>
-                        {action.label}
-                      </Typography>
-                    </IconButton>
-                  </Tooltip>
-                </Box>
-              ))}
-          </Box>
-        </CardActions>
+        {/* NEW: optional custom footer; fallback to default action buttons */}
+        {renderCardFooter ? (
+          renderCardFooter({ row })
+        ) : (
+          <CardActions
+            sx={{
+              justifyContent: "space-between",
+              flexDirection: "column",
+              p: 2,
+            }}
+          >
+            <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
+              {[
+                // default actions + customRowActions (unchanged)
+                {
+                  condition: actions.onView,
+                  label: "View",
+                  icon: <ViewIcon fontSize="small" />,
+                  color: "info",
+                  onClick: () => actions.onView(row),
+                },
+                {
+                  condition: actions.onEdit,
+                  label: "Edit",
+                  icon: <EditIcon fontSize="small" />,
+                  color: "primary",
+                  onClick: () => actions.onEdit(row),
+                },
+                {
+                  condition: actions.onDelete,
+                  label: "Delete",
+                  icon: <DeleteIcon fontSize="small" />,
+                  color: "error",
+                  onClick: () => actions.onDelete(row),
+                },
+                ...customRowActions.map((action) => ({
+                  condition: true,
+                  label: action.label,
+                  icon: action.icon,
+                  color: action.color || "default",
+                  onClick: () => action.onClick(row),
+                })),
+              ]
+                .filter((action) => action.condition)
+                .map((action, index) => (
+                  <Box key={index}>
+                    <Tooltip key={index} title={action.label}>
+                      <IconButton
+                        size="small"
+                        onClick={action.onClick}
+                        color={action.color}
+                        sx={{ justifyContent: "flex-start" }}
+                      >
+                        {action.icon}
+                        <Typography variant="caption" sx={{ ml: 1 }}>
+                          {action.label}
+                        </Typography>
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                ))}
+            </Box>
+          </CardActions>
+        )}
 
         {expandable && (
           <Button
