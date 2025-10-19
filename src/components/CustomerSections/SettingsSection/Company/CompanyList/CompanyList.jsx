@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { TableView } from "@/components/TableView/TableView";
 import { useCompany } from "@/hooks/customer/useCompany";
 import { useDialog } from "@/hooks/useDialog";
-import { useRouter } from "@/i18n/routing";
 import { icons } from "@/config/routeIcons";
-import { Box, Chip, IconButton, Typography } from "@mui/material";
-import { title } from "process";
-import { MoreVert } from "@mui/icons-material";
+import { Box } from "@mui/material";
 import CompanyCard from "./CompanyCard/CompanyCard";
 import { LoadingCard } from "@/components/ui/LoadingComponents";
 import SheetDrawer from "@/components/ui/Sheet/SheetDrawer";
 import CompanyForm from "../CompanyForm/CompanyForm";
+import EmptyCompany from "./EmptyCompany";
 
 const CompanyList = () => {
-  const router = useRouter();
-
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingCompany, setEditingCompany] = useState(null);
 
@@ -23,16 +18,10 @@ const CompanyList = () => {
     setEditingCompany(null);
   };
 
-  const handleCreateCompany = () => {
-    setEditingCompany(null);
-    setIsDrawerOpen(true);
-  };
-
   const handleEditCompany = (company) => {
     setEditingCompany(company);
     setIsDrawerOpen(true);
   };
-    
 
   const {
     companies,
@@ -132,10 +121,6 @@ const CompanyList = () => {
     refetch,
   ]);
 
-  const handleEdit = (company) => {
-    router.push(`/settings/companies/edit/${company.id}`);
-  };
-
   const handleDelete = (company) => {
     confirmDialog({
       title: "Confirm Deletion",
@@ -146,22 +131,11 @@ const CompanyList = () => {
   };
 
   const handleSetDefault = (company) => {
-    alert({
+    confirmDialog({
       title: "Confirm Set Default",
       message: `Are you sure you want to set "${company.name}" as the default company?`,
       type: "info",
-    });
-
-    setDefaultCompany(company.id, {
-      onSuccess: (result) => {
-        if (result?.success) {
-          alert("Default company set successfully!");
-          refetch();
-        }
-      },
-      onError: (error) => {
-        alert(`Failed to set default company: ${error.message}`);
-      },
+      onConfirm: () => setDefaultCompany(company.id),
     });
   };
 
@@ -187,37 +161,28 @@ const CompanyList = () => {
     return <LoadingCard />;
   }
 
-  // Show empty state
+  // Beautiful empty state
   if (!companies || companies.length === 0) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: 400,
-          gap: 2,
-        }}
-      >
-        <Typography variant="h6" color="text.secondary">
-          No companies found
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Create your first company to get started
-        </Typography>
-      </Box>
-    );
+    return <EmptyCompany />;
   }
 
   return (
     <Box sx={{ marginBottom: 5 }}>
       {companies?.map((company) => (
-        <CompanyCard key={company.id} company={company} actions={actions} />
+        <CompanyCard
+          key={company.id}
+          company={company}
+          actions={actions}
+          onToggleDefault={handleSetDefault}
+        />
       ))}
 
       <SheetDrawer open={isDrawerOpen} onClose={handleCloseDrawer}>
-        <CompanyForm companyId={1} mode="edit" />
+        <CompanyForm
+          handleCloseDrawer={handleCloseDrawer}
+          companyData={editingCompany}
+          mode={editingCompany ? "edit" : "create"}
+        />
       </SheetDrawer>
     </Box>
   );

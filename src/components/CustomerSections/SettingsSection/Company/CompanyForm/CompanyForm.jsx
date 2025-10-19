@@ -1,17 +1,43 @@
-'use client'
-import React, { useEffect } from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { companyDefaultValues, companyFormSchema, companyMapData } from "@/utils/formatCompanyData";
+import {
+  companyDefaultValues,
+  companyFormSchema,
+  companyMapData,
+  formatCompanyForSubmission,
+} from "@/utils/formatCompanyData";
 import CompanyFields from "./CompanyFields";
-import { Box, Alert, CircularProgress } from "@mui/material";
+import { Box, Alert } from "@mui/material";
 import { useCompany, useGetCompany } from "@/hooks/customer/useCompany";
-import { useRouter } from "@/i18n/routing";
+import { useDialog } from "@/hooks/useDialog";
 
-const CompanyForm = ({ companyId = 1, mode = "edit" }) => {
-  const router = useRouter();
-  const { company, isLoading: loadingCompany } = useGetCompany(companyId);
-  console.log("Company data:", company);
+const CompanyForm = ({
+  handleCloseDrawer,
+  companyData = {},
+  mode = "create",
+}) => {
+  console.log("companyData", companyData);
+  const [company, setCompany] = useState();
+
+  useEffect(() => {
+    if (mode === "edit") {
+      setCompany(companyData);
+    }
+  }, [companyData, mode]);
+
+  const {
+    open,
+    close: closeDialog,
+    loading: showLoading,
+    alert,
+    confirm: confirmDialog,
+  } = useDialog();
+  // const { company, isLoading: loadingCompany } = useGetCompany(companyId);
+  const companyId = company?.id;
+  console.log("mode", mode);
+  console.log("Company:", company);
   const {
     createCompany,
     createCompanyResult,
@@ -19,17 +45,21 @@ const CompanyForm = ({ companyId = 1, mode = "edit" }) => {
     updateCompanyResult,
   } = useCompany();
 
-  const defaultValues = company ? companyMapData(company) : companyDefaultValues;
+  const defaultValues = company
+    ? companyMapData(company)
+    : companyDefaultValues;
   const {
     control,
     handleSubmit,
     reset,
     getValues,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
-        ...defaultValues,
+      ...defaultValues,
     },
   });
 
@@ -40,14 +70,52 @@ const CompanyForm = ({ companyId = 1, mode = "edit" }) => {
     }
   }, [company, mode, reset]);
 
+  // Handle update loaders/alerts
+  useEffect(() => {
+    if (updateCompanyResult.isPending) {
+      showLoading({
+        title: "Updating  Company...",
+        message: "Please wait while updating company...",
+      });
+    } else {
+      closeDialog();
+    }
+    if (updateCompanyResult.isSuccess) {
+      alert({
+        title: "Success",
+        message:
+          updateCompanyResult.data?.message || "Company set successfully!",
+        type: "success",
+      });
+    }
+    if (updateCompanyResult.isError) {
+      alert({
+        title: "Error",
+        message:
+          updateCompanyResult.error?.message ||
+          "Failed to set default company.",
+        type: "error",
+      });
+    }
+  }, [
+    updateCompanyResult.isPending,
+    updateCompanyResult.isSuccess,
+    updateCompanyResult.isError,
+    updateCompanyResult.error,
+    updateCompanyResult.data,
+    showLoading,
+    closeDialog,
+    alert,
+  ]);
+
   const onSubmit = async (data) => {
+    const input = formatCompanyForSubmission(data);
     try {
       if (mode === "create") {
-        createCompany(data, {
+        createCompany(input, {
           onSuccess: (result) => {
             if (result?.success) {
               alert("Company created successfully!");
-              router.push("/customer/settings");
             }
           },
           onError: (error) => {
@@ -56,16 +124,9 @@ const CompanyForm = ({ companyId = 1, mode = "edit" }) => {
         });
       } else {
         updateCompany(
-          { id: companyId, ...data },
+          { id: companyId, ...input },
           {
-            onSuccess: (result) => {
-              if (result?.success) {
-                alert("Company updated successfully!");
-              }
-            },
-            onError: (error) => {
-              alert(`Failed to update company: ${error.message}`);
-            },
+            onSuccess: handleCloseDrawer(),
           }
         );
       }
@@ -74,14 +135,6 @@ const CompanyForm = ({ companyId = 1, mode = "edit" }) => {
       alert("Failed to save company. Please try again.");
     }
   };
-
-  if (loadingCompany) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
 
   return (
     <Box sx={{ maxWidth: 1200, mx: "auto", p: 2 }}>
@@ -97,6 +150,8 @@ const CompanyForm = ({ companyId = 1, mode = "edit" }) => {
         errors={errors}
         handleSubmit={handleSubmit(onSubmit)}
         reset={reset}
+        setValue={setValue}
+        watch={watch}
         getValues={getValues}
         loading={createCompanyResult.isPending || updateCompanyResult.isPending}
         mode={mode}

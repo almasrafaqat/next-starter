@@ -1,31 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { applogRequest } from "@/lib/applog";
 import { useSession } from "next-auth/react";
-import { COMPANY_LOGO_URL } from "@/config/apiConfig";
-
-// Small helper
-const uploadLogoRequest = async ({ id, file, token }) => {
-  const fd = new FormData();
-  fd.append("logo", file);
-  const res = await fetch(COMPANY_LOGO_URL(id), {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` }, // no Content-Type
-    body: fd,
-  });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json?.message || "Logo upload failed");
-  return json;
-};
-
-const deleteLogoRequest = async ({ id, token }) => {
-  const res = await fetch(COMPANY_LOGO_URL(id), {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json?.message || "Logo delete failed");
-  return json;
-};
 
 // Query: Fetch all companies for the logged-in user
 const GET_COMPANIES_QUERY = `
@@ -37,8 +12,6 @@ const GET_COMPANIES_QUERY = `
       phone
       address
       website
-      logo
-      logoUrl
       tax_number
       registration_number
       country
@@ -285,15 +258,7 @@ export function useCompany(options = {}) {
     },
   });
 
-  const uploadLogo = useMutation({
-    mutationFn: async ({ id, file }) => uploadLogoRequest({ id, file, token }),
-    onSuccess: () => queryClient.invalidateQueries(queryKey),
-  });
 
-  const removeLogo = useMutation({
-    mutationFn: async ({ id }) => deleteLogoRequest({ id, token }),
-    onSuccess: () => queryClient.invalidateQueries(queryKey),
-  });
 
   return {
     ...query,
@@ -307,11 +272,6 @@ export function useCompany(options = {}) {
     deleteCompanyResult: deleteCompany,
     setDefaultCompany: setDefault.mutate,
     setDefaultCompanyResult: setDefault,
-    //Logo
-    uploadCompanyLogo: uploadLogo.mutateAsync,
-    uploadCompanyLogoResult: uploadLogo,
-    removeCompanyLogo: removeLogo.mutateAsync,
-    removeCompanyLogoResult: removeLogo,
   };
 }
 
@@ -345,3 +305,5 @@ export function useGetCompany(id, options = {}) {
     company: query.data,
   };
 }
+
+

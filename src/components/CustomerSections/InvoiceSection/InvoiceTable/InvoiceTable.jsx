@@ -21,7 +21,7 @@ import {
   TextArrayField,
 } from "@/components/TableView/FieldRenderers";
 
-export default function InvoiceTable({ invoices, isLoading }) {
+export default function InvoiceTable({ company, invoices, isLoading }) {
   console.log("Invoices:", invoices);
   const {
     sendInvoice,
@@ -45,7 +45,7 @@ export default function InvoiceTable({ invoices, isLoading }) {
   useEffect(() => {
     if (sendInvoiceResult.isPending) {
       showLoading({
-        title: "sending Invoice...",
+        title: "Sending Invoice...",
         message: "Sending invoice...",
       });
     } else {
@@ -54,16 +54,16 @@ export default function InvoiceTable({ invoices, isLoading }) {
     if (sendInvoiceResult.isSuccess) {
       // Optionally show success message
       alert({
-        title: "Success",
+        title: sendInvoiceResult.data.title,
         message: sendInvoiceResult.data.message || "Invoice sent successfully!",
-        type: "success",
+        type: sendInvoiceResult.data.type,
       });
     }
     if (sendInvoiceResult.isError) {
       alert({
-        title: "Error",
+        title: sendInvoiceResult.data.title,
         message: sendInvoiceResult.error.message || "Failed to send invoice.",
-        type: "error",
+        type: sendInvoiceResult.data.type,
       });
     }
   }, [
@@ -220,7 +220,7 @@ export default function InvoiceTable({ invoices, isLoading }) {
   const handleUpdateInvoice = (invoice) => {
     showDrawer(
       <CreateInvoice
-        companyId={1}
+        companyId={company?.id}
         invoice={invoice}
         handleSubmitInvoice={updateInvoiceHandler}
       />,
@@ -231,7 +231,6 @@ export default function InvoiceTable({ invoices, isLoading }) {
 
   const updateInvoiceHandler = (formData) => {
     const InvoiceId = formData.id;
-    console.log("Updating invoice:", InvoiceId);
     updateInvoice({ id: InvoiceId, args: formData });
   };
 

@@ -67,7 +67,11 @@ const SEND_INVOICE_MUTATION = `
   mutation SendInvoice($id: ID!) {
     sendInvoice(id: $id) {
       message
+      title
       success
+      type
+      data
+
     }
   }
 `;

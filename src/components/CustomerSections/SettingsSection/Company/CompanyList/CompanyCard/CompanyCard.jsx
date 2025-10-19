@@ -1,80 +1,28 @@
 import React, { useState } from "react";
 import {
   Box,
-  Card,
   CardContent,
-  Collapse,
-  IconButton,
-  Typography,
   Divider,
-  Chip,
-  Tooltip,
-  styled,
-  alpha,
 } from "@mui/material";
-import {
-  ExpandMore as ExpandMoreIcon,
-  Email as EmailIcon,
-  Lock as LockIcon,
-  CheckCircle as CheckCircleIcon,
-  Warning as WarningIcon,
-} from "@mui/icons-material";
 import CompanyCardHeader from "./CompanyCardHeader";
 import { icons } from "@/config/routeIcons";
 import CustomTypography from "@/components/Typography/CustomTypography";
-import { AndroidSwitch } from "@/components/ui/switch/CustomSwitch";
+import {  IOSSwitch } from "@/components/ui/switch/CustomSwitch";
 import SmtpCard from "../SmtpCard/SmtpCard";
+import { StyledCard,InfoRow, StyledTooltip, ToggleRow } from "./CompanyCard.styles";
 
-// Styled Components
-const StyledCard = styled(Card)(({ theme }) => ({
-  position: "relative",
-  overflow: "hidden",
-  borderLeft: `4px solid ${theme.palette.primary.main}`,
-  transition: "all 0.3s ease",
-  "&:hover": {
-    boxShadow: theme.shadows[6],
-  },
-}));
 
-const InfoRow = styled(Box)(({ theme }) => ({
-  display: "flex",
-  alignItems: "flex-start",
-  gap: theme.spacing(1),
-  marginTop: theme.spacing(1),
-  marginBottom: theme.spacing(2),
-}));
-
-const StyledTooltip = styled(({ className, ...props }) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
-  "& .MuiTooltip-tooltip": {
-    backgroundColor: theme.palette.grey[800],
-    color: theme.palette.common.white,
-    fontSize: 12,
-    padding: theme.spacing(1, 1.5),
-  },
-  "& .MuiTooltip-arrow": {
-    color: theme.palette.grey[800],
-  },
-}));
-
-const ToggleRow = styled(Box)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  marginBottom: theme.spacing(1.5),
-}));
 
 const CompanyCard = ({ company, actions, onToggleActive, onToggleDefault }) => {
   const handleActiveToggle = (event) => {
     if (onToggleActive) {
-      onToggleActive(company.id, event.target.checked);
+      onToggleActive(company, event.target.checked);
     }
   };
 
   const handleDefaultToggle = (event) => {
     if (onToggleDefault) {
-      onToggleDefault(company.id, event.target.checked);
+      onToggleDefault(company, event.target.checked);
     }
   };
 
@@ -177,7 +125,7 @@ const CompanyCard = ({ company, actions, onToggleActive, onToggleDefault }) => {
                 Company Active
               </CustomTypography>
             </Box>
-            <AndroidSwitch
+            <IOSSwitch
               checked={company.is_active}
               onChange={handleActiveToggle}
             />
@@ -203,7 +151,7 @@ const CompanyCard = ({ company, actions, onToggleActive, onToggleDefault }) => {
                 Company Default
               </CustomTypography>
             </Box>
-            <AndroidSwitch
+            <IOSSwitch
               checked={company.is_default}
               onChange={handleDefaultToggle}
               disabled={company.is_default}

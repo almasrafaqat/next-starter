@@ -10,14 +10,21 @@ import { useInvoice } from "@/hooks/customer/useInvoice";
 import { useDrawer } from "@/hooks/useDrawer";
 
 const InvoiceSection = () => {
-  const { data, isLoading, error, createInvoice, createInvoiceResult } =
-    useInvoice();
+  const {
+    data,
+    isLoading,
+    error,
+    createInvoice,
+    createInvoiceResult,
+  } = useInvoice();
 
   const { showDrawer, hideDrawer } = useDrawer();
   const formRef = useRef();
   // Flatten all invoices from all companies
   const invoices =
     data?.companies?.flatMap((company) => company.invoices) || [];
+
+  
 
   const companyIds = [
     ...new Set(data?.companies?.map((company) => company.id) || []),
@@ -44,13 +51,15 @@ const InvoiceSection = () => {
     }
   };
 
-  const handleOpenDrawer = (companyId) => {
-    console.log("companyId:", companyId);
+
+
+  const handleOpenDrawer = () => {
     showDrawer(
       <CreateInvoice
-        companyId={companyId}
+        companyId={companyIds[0]}
         ref={formRef}
         handleSubmitInvoice={handleSubmitInvoice}
+      
       />,
       "Create Invoice",
       "bottom"
@@ -95,25 +104,18 @@ const InvoiceSection = () => {
     closeDialog,
   ]);
 
+
+
   return (
     <PageHead title="Manage Invoices" index={false}>
-      
-    
+      <HeadingTitle title="Manage Invoices" />
+      <PrimaryButton sx={{ mt: 2, mb: 2 }} onClick={handleOpenDrawer}>
+        Create Invoice
+      </PrimaryButton>
 
       {isLoading && <div>Loading...</div>}
       {error && <div>Error: {error.message}</div>}
-      {data?.companies?.map((company) => (
-        <div key={company.id}>
-          <HeadingTitle title={company.name || "Manage Invoices"} />
-          <PrimaryButton
-            sx={{ mt: 2, mb: 2 }}
-            onClick={() => handleOpenDrawer(company.id)} // Pass company ID to the drawer
-          >
-            Create Invoice
-          </PrimaryButton>
-          <InvoiceTable company={company} invoices={company.invoices} isLoading={isLoading} />
-        </div>
-      ))}
+      <InvoiceTable invoices={invoices} isLoading={isLoading} />
     </PageHead>
   );
 };

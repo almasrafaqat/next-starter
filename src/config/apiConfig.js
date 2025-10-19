@@ -17,6 +17,7 @@ export const REGISTER_URL = () => `${API_BASE_URL}/register`;
 export const FORGOT_PASSWORD_URL = () => `${API_BASE_URL}/password/forgot`;
 export const RESET_PASSWORD_URL = () => `${API_BASE_URL}/password/reset`;
 export const SOCIAL_LOGIN = () => `${API_BASE_URL}/social-login`;
+export const COMPANY_LOGO_URL = (id) => `${API_BASE_URL}/companies/${id}/logo`;
 
 export const AppURL = {
   ApiGetCategories: `${API_BASE_URL}/categories`,
